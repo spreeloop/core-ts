@@ -1,0 +1,10 @@
+# Node.js dependency directory
+node_modules/
+
+# Compiled JavaScript files
+dist/**/*.js
+dist/**/*.js.map
+
+# Coverage generated
+coverage/
+.nyc_output/
