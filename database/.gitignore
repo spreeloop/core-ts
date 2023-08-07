@@ -1,9 +1,8 @@
 # Node.js dependency directory
 node_modules/
 
-# Compiled JavaScript files
-dist/**/*.js
-dist/**/*.js.map
+# Compiled files and types
+dist/
 
 # Coverage generated
 coverage/

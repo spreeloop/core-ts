@@ -11,9 +11,14 @@
     "strict": true,
     "target": "es2017"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "compileOnSave": true,
   "include": ["src",
     "index.ts"
   ],
-  "exclude": []
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
