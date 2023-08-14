@@ -41,7 +41,7 @@ export interface DatabaseDocument<T = unknown> {
 
 /**
  * Class that contains a static enumeration of all
- * final implementation.
+ * final implementations.
  */
 export abstract class Database {
   /**
@@ -76,7 +76,7 @@ export abstract class Database {
   ): Promise<string | undefined>;
 
   /**
-   * Creates or update a database document with the given path.
+   * Creates or updates a database document with the given path.
    * @param {string} path The database path to the document.
    * @param {Partial<Object>} data The database path to the document.
    * @return {boolean} The operation status.

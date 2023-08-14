@@ -1,4 +1,4 @@
 {
-  "include": [".eslintrc.js", "index.spec.ts", "jest.config.ts", "jest.before-test.ts", "babel.config.js"],
+  "include": [".eslintrc.js", "index.spec.ts", "jest.config.ts", "jest.before-test.ts"],
   "exclude": []
 }
