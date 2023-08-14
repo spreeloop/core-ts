@@ -1,0 +1,29 @@
+name: Pre-Submit (Markdown)
+on:
+  workflow_call:
+
+jobs:
+  changes:
+    runs-on: [ubuntu-latest]
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            src:
+              - '**/*.md'
+
+  markdownlint:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: [ubuntu-latest]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: reviewdog/action-markdownlint@v0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
