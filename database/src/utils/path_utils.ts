@@ -1,5 +1,5 @@
 /**
- * Returns a the corresponding database path.
+ * Returns the corresponding database path.
  * @param {string} collectionId The ID or name of the collection.
  * @param {string} documentId The ID of the document.
  * @return {string} The full database path of the document.
