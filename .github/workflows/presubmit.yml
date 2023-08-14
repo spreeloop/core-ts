@@ -1,0 +1,20 @@
+name: presubmit
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  markdown:
+    uses: ./.github/workflows/presubmit_markdown.yml
+
+  spellcheck:
+    uses: ./.github/workflows/presubmit_spellcheck.yml
+
+  yaml:
+    uses: ./.github/workflows/presubmit_yaml.yml

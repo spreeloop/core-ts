@@ -1,0 +1,28 @@
+name: Pre-Submit (YAML)
+on:
+  workflow_call:
+
+jobs:
+  changes:
+    runs-on: [ubuntu-latest]
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            src:
+              - '.github/workflows/**'
+
+  actionlint:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: [ubuntu-latest]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: reviewdog/action-actionlint@v1
+        with:
+          fail_on_error: true
