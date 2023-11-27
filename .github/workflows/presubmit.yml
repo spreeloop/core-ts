@@ -10,6 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  database:
+    uses: ./.github/workflows/presubmit_database.yml
+
   markdown:
     uses: ./.github/workflows/presubmit_markdown.yml
 
