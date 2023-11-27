@@ -38,20 +38,15 @@ export function getOldestParentName(path: string): string | undefined {
  * @return {boolean}
  */
 export function isValidDocumentPath(path: string): boolean {
-  const minimumValidPathSegmentLength = 2;
-  const pathSegments = path.trim().split('/');
-  if (pathSegments.length < minimumValidPathSegmentLength) {
+  const pathSegments = path
+    .trim()
+    .split('/')
+    .filter((segment) => segment.length > 0);
+  if (pathSegments.length === 0) {
     return false;
   }
-  const remainder = pathSegments.length % minimumValidPathSegmentLength;
-  if (remainder != 0) {
-    return false;
-  }
-  const documentId = pathSegments.pop();
-  if (!pathSegments[0] || !documentId) {
-    return false;
-  }
-  return true;
+
+  return pathSegments.length % 2 === 0;
 }
 
 /**
@@ -60,16 +55,13 @@ export function isValidDocumentPath(path: string): boolean {
  * @return {boolean}
  */
 export function isValidCollectionPath(path: string): boolean {
-  if (path.length < 1) {
-    return false;
-  }
-  const pathSegments = path.trim().split('/');
-  if (pathSegments.length == 1 && pathSegments[0]) {
-    return true;
-  }
-  const remainder = pathSegments.length % 3;
+  const pathSegments = path
+    .trim()
+    .split('/')
+    .filter((segment) => segment.length > 0);
 
-  return remainder == 0;
+  console.log(`segmemnts: ${pathSegments.length}`);
+  return pathSegments.length % 2 === 1;
 }
 
 /**

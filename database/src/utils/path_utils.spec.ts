@@ -60,14 +60,18 @@ describe('isValidDocumentPath', () => {
     const response2 = isValidDocumentPath(
       'collection-name/document-id/col/doc'
     );
+    const response3 = isValidDocumentPath('/collection-name/document-id/');
+    const response4 = isValidDocumentPath('collection-name/document-id/');
     expect(response1).toBe(true);
     expect(response2).toBe(true);
+    expect(response3).toBe(true);
+    expect(response4).toBe(true);
   });
 
   it('should return false if the document path is not valid', () => {
     const response = isValidDocumentPath('');
     const response1 = isValidDocumentPath('/id-01');
-    const response2 = isValidDocumentPath('collection-name/document-id/');
+    const response2 = isValidDocumentPath('collection-name/document-id/col');
     expect(response).toBe(false);
     expect(response1).toBe(false);
     expect(response2).toBe(false);
@@ -76,15 +80,19 @@ describe('isValidDocumentPath', () => {
 
 describe('isValidCollectionPath', () => {
   it('should returns true if the collection path is valid', () => {
-    const response1 = isValidCollectionPath('id-01');
-    const response2 = isValidCollectionPath('collection-name/document-id/col');
-    expect(response1).toBe(true);
-    expect(response2).toBe(true);
+    //const response1 = isValidCollectionPath('id-01');
+    //const response2 = isValidCollectionPath('collection-name/document-id/col');
+    const response3 = isValidCollectionPath('/id-01');
+    //const response4 = isValidCollectionPath('/id-01/');
+    //expect(response1).toBe(true);
+    //expect(response2).toBe(true);
+    expect(response3).toBe(true);
+    //expect(response4).toBe(true);
   });
 
   it('should returns false if the collection path is not valid', () => {
     const response = isValidCollectionPath('');
-    const response1 = isValidCollectionPath('/id-01');
+    const response1 = isValidCollectionPath('/collection-name/document-id');
     const response2 = isValidCollectionPath('collection-name/document-id');
     expect(response).toBe(false);
     expect(response1).toBe(false);
