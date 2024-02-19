@@ -1,11 +1,12 @@
-import * as requests from '../../utils/https';
+import { Logger } from '@spreeloop-core/logging';
+import * as requests from '../../common/utils/https';
 import { OrangeMoneyPaymentStatus } from '../utils/constants';
 
-import { TargetEnvironment } from '../../utils/utils';
+import { TargetEnvironment } from '../../common/utils/utils';
 import { GetOrangeMoneyPaymentRequest } from '../utils/request_model';
 import { getPaymentStatus } from './get_payment_status';
 
-const logger = console;
+const logger = new Logger();
 
 describe('Test the status verification', () => {
   const mobilePaymentParamForCheckStatus: GetOrangeMoneyPaymentRequest = {

@@ -1,4 +1,4 @@
-import { OperationResponse } from '../../utils/operation_response';
+import { OperationResponse } from '../../common/utils/operation_response';
 import { ApiErrorType, OrangeMoneyPaymentStatus } from './constants';
 import {
   AccessTokenRequestResponse,

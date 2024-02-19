@@ -1,4 +1,4 @@
-import { postRequest } from '../../utils/https';
+import { postRequest } from '../../common/utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
   OrangeMoneyPaymentV2Params,

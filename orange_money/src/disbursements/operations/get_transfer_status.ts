@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import { getRequest } from '../../utils/https';
-import { OperationResponse } from '../../utils/operation_response';
+import { getRequest } from '../../common/utils/https';
+import { OperationResponse } from '../../common/utils/operation_response';
 import {
   DisbursementServiceConfig,
   DisbursementServiceConfigSchema,

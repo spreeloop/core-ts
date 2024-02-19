@@ -3,7 +3,7 @@ import {
   RequestStatusCode,
   isSuccessfulCodeResponse,
   postRequest,
-} from '../../utils/https';
+} from '../../common/utils/https';
 import { Routes } from '../routes/routes';
 import {
   ApiErrorType,

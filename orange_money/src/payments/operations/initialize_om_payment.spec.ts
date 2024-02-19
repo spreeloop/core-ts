@@ -1,11 +1,12 @@
-import * as requests from '../../utils/https';
+import { Logger } from '@spreeloop-core/logging';
+import * as requests from '../../common/utils/https';
 import { ApiErrorType } from '../utils/constants';
 
-import { TargetEnvironment } from '../../utils/utils';
+import { TargetEnvironment } from '../../common/utils/utils';
 import { InitializeOrangeMoneyRequest } from '../utils/request_model';
 import { initializeOmPayment } from './initialize_om_payment';
 
-const logger = console;
+const logger = new Logger();
 
 describe('Test the initialization of payment', () => {
   const mobileInitiateParams: InitializeOrangeMoneyRequest = {

@@ -2,7 +2,7 @@ import {
   encodeTheBodyOfRequest,
   encodeToBase64,
   postRequest,
-} from '../../utils/https';
+} from '../../common/utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
   AccessTokenRequestResponse,

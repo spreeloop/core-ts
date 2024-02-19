@@ -22,10 +22,13 @@ export enum ApiKey {
   keyMobileNotifUrl = 'notifUrl',
 }
 
-export enum LanguageSupported {
-  en = 'en',
-  fr = 'fr',
+export enum TargetEnvironment {
+  sandbox = 'dev',
+  prod = 'prod',
+  fake = 'fake',
 }
+
+export const orangeMoneyEndPoint = 'https://api-s1.orange.cm';
 
 /**
  * Contains request fields.
@@ -57,9 +60,9 @@ export class ConstantRequestField {
 }
 
 /**
- * The orange money payment status.
+ * The status of payment request.
  */
-export enum OrangeMoneyPaymentStatus {
+export enum OrangePaymentStatus {
   /**
    * User has clicked on “Confirmed”, transaction
    * is in progress on Orange system.
@@ -104,22 +107,14 @@ export enum OrangeMoneyPaymentStatus {
   EXPIRED_PAYMENT = 'EXPIRED',
 }
 
-export enum ApiErrorType {
-  insufficientFunds = 'insufficientFunds',
-  invalidOrangeMoneyNumber = 'invalidOrangeMoneyNumber',
-  invalidData = 'invalidData',
-  failedToInitiateThePayment = 'failedToInitiateThePayment',
-  failedToGenerateAccessToken = 'failedToGenerateAccessToken',
-  failedToCheckPaymentStatus = 'failedToCheckPaymentStatus',
-  failedToGeneratePayToken = 'failedToGeneratePayToken',
-  accountLocked = 'accountLocked',
-  invalidPaymentAmount = 'invalidPaymentAmount',
-  unauthorized = 'unauthorized',
-}
-
-export enum OrangeMoneyErrorMessage {
-  beneficiaryNotFound = 'Beneficiaire introuvable',
-  insufficientFunds = 'Le solde du compte du payeur est insuffisant',
-  accountLocked = 'Utilisateur bloque',
-  invalidPaymentAmount = 'Vous avez saisi un montant superieur au montant maximum autorise',
+export enum OrangeMoneyErrorType {
+  insufficientFunds = 'Insufficient fund',
+  invalidOrangeMoneyNumber = 'Invalid orange money number',
+  invalidData = 'Invalid data provided',
+  failToInitiateThePayment = 'Failed to initiate the payment',
+  failToGenerateAccessToken = 'Failed to generate the access token',
+  failToCheckPaymentStatus = 'Failed to check the status of payment',
+  failToGeneratePayToken = 'Failed to generate payToken',
+  lockAccount = 'Account locked',
+  invalidPaymentAmount = 'Amount greater than the maximum allowed',
 }

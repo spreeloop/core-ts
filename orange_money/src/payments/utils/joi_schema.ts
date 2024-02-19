@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { OrangeMoneyPaymentStatus } from './constants';
+import { TargetEnvironment } from '../../constants';
 import { LoggerInterface } from '../../utils/logging_interface';
-import { TargetEnvironment } from '../../utils/utils';
+import { OrangeMoneyPaymentStatus } from './constants';
 
 /**
  * The provider generic response data of payment request of status verification request.
