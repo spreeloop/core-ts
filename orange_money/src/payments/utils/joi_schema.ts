@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import { TargetEnvironment } from '../../constants';
 import { LoggerInterface } from '../../utils/logging_interface';
+import { TargetEnvironment } from '../../utils/utils';
 import { OrangeMoneyPaymentStatus } from './constants';
 
 /**

@@ -1,7 +1,7 @@
 import { Logger } from '@spreeloop-core/logging';
-import * as requests from '../../common/utils/https';
+import * as requests from '../../utils/https';
 
-import { TargetEnvironment } from '../../common/utils/utils';
+import { TargetEnvironment } from '../../utils/utils';
 import { PayTokenRequestResponse } from '../utils/joi_schema';
 import { getPayToken } from './get_pay_token';
 

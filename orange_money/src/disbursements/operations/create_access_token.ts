@@ -3,8 +3,8 @@ import {
   encodeDataToXFormUrl,
   hash,
   postRequest,
-} from '../../common/utils/https';
-import { OperationResponse } from '../../common/utils/operation_response';
+} from '../../utils/https';
+import { OperationResponse } from '../../utils/operation_response';
 import {
   DisbursementServiceConfig,
   DisbursementServiceConfigSchema,

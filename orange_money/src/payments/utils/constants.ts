@@ -22,11 +22,6 @@ export enum ApiKey {
   keyMobileNotifUrl = 'notifUrl',
 }
 
-export enum LanguageSupported {
-  en = 'en',
-  fr = 'fr',
-}
-
 /**
  * Contains request fields.
  */

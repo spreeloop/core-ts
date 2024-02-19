@@ -1,4 +1,4 @@
-import { getRequest, isSuccessfulCodeResponse } from '../../common/utils/https';
+import { getRequest, isSuccessfulCodeResponse } from '../../utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
   GenericRequestResponseData,

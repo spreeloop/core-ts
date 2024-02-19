@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { Logger } from '../../../../logging/src/logging';
-import * as requests from '../../common/utils/https';
+import * as requests from '../../utils/https';
 import { DisbursementXTargetEnvironmentType } from '../utils/constants';
 import { DisbursementApiRawStatus, DisbursementStatus } from '../utils/status';
 import { DisbursementStep, getTransferStatus } from './get_transfer_status';

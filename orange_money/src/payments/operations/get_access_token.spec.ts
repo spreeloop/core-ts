@@ -1,6 +1,6 @@
 import { Logger } from '../../../../logging/src/logging';
-import * as requests from '../../common/utils/https';
-import { TargetEnvironment } from '../../common/utils/utils';
+import * as requests from '../../utils/https';
+import { TargetEnvironment } from '../../utils/utils';
 import { AccessTokenRequestResponse } from '../utils/joi_schema';
 
 import { getAccessToken } from './get_access_token';

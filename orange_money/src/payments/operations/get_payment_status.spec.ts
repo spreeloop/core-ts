@@ -1,8 +1,8 @@
 import { Logger } from '@spreeloop-core/logging';
-import * as requests from '../../common/utils/https';
+import * as requests from '../../utils/https';
 import { OrangeMoneyPaymentStatus } from '../utils/constants';
 
-import { TargetEnvironment } from '../../common/utils/utils';
+import { TargetEnvironment } from '../../utils/utils';
 import { GetOrangeMoneyPaymentRequest } from '../utils/request_model';
 import { getPaymentStatus } from './get_payment_status';
 

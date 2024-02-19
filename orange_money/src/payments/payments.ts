@@ -1,4 +1,4 @@
-import { TargetEnvironment } from '../common/utils/utils';
+import { TargetEnvironment } from '../utils/utils';
 import { OrangeMoneyPaymentFake } from './implementations/fake';
 import { OrangeMoneyPaymentLive } from './implementations/live';
 import { OrangeMoneyPaymentV2Params } from './utils/joi_schema';
@@ -28,8 +28,8 @@ export interface OrangeMoneyPaymentInterface {
    * Initializes the orange money payment.
    *
    * @param {String} mobileInitParams.description the payment description.
-   * @param {String} mobileInitParams.userPhoneNumber The phone number of the user making the payment.
-   * @param {String} mobileInitParams.receiverPhoneNumber The phone number of the user receiving the payment.
+   * @param {String} mobileInitParams.subscriberNumber The phone number of the user making the payment.
+   * @param {String} mobileInitParams.channelUserNumber The phone number of the user receiving the payment.
    * @param {String} mobileInitParams.transactionId Unique identifier of the customer transaction.
    * @param {String} mobileInitParams.amount The amount of the transaction.
    * @param {String} mobileInitParams.pinCode The Pin code of the ChannelUser.
