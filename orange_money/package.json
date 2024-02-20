@@ -1,7 +1,8 @@
 {
   "name": "@spreeloop/orange_money",
   "version": "1.0.0",
-  "description": "A core spreeloop orange money api integration package",
+  "description": "A orange money api integration package",
+  "git repository": "https://github.com/spreeloop/core-ts/orange_money",
   "author": "Spreeloop",
   "scripts": {
     "lint": "eslint --max-warnings=0 --ext .js,.ts .",
@@ -12,8 +13,11 @@
   "license": "MIT",
   "types": "dist/index.d.ts",
   "type": "commonjs",
+  "test command": "jest",
   "keywords": [
-    "orange money"
+    "orange money",
+    "y-note",
+    "nodejs"
   ],
   "devDependencies": {
     "@babel/core": "^7.19.0",

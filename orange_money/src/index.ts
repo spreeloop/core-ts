@@ -1,6 +1,6 @@
 export { Disbursement } from './disbursements/implementations/disbursement_service';
 export {
-  OrangeMoneyPaymentV2,
+  OrangeMoneyPayment,
   OrangeMoneyPaymentInterface,
 } from './payments/payments';
 export {

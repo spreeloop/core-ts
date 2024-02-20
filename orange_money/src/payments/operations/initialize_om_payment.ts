@@ -14,7 +14,7 @@ import {
 import {
   GenericRequestResponseData,
   InitPaymentBodySchema,
-  OrangeMoneyPaymentV2Params,
+  OrangeMoneyPaymentParams,
   initPaymentBodySchema,
 } from '../utils/joi_schema';
 import {
@@ -28,7 +28,7 @@ import { validateData } from '../utils/utils';
  *
  * @param {InitializeOmPaymentRequest} mobileInitParams - The mobile initialization parameters.
  * @param {string} endPoint - The init payment end point.
- * @param {OrangeMoneyPaymentV2Params} paymentConfig - The mobile payment config parameters.
+ * @param {OrangeMoneyPaymentParams} paymentConfig - The mobile payment config parameters.
  *    - {TargetEnvironment} paymentConfig.targetEnvironment - The target environment.
  *    - {string} paymentConfig.apiUserName - The api user name.
  *    - {string} paymentConfig.xAuthToken - The x-auth-token.
@@ -43,7 +43,7 @@ export async function initializeOmPayment({
   endPoint,
 }: {
   mobileInitParams: InitializeOrangeMoneyRequest;
-  paymentConfig: OrangeMoneyPaymentV2Params;
+  paymentConfig: OrangeMoneyPaymentParams;
   endPoint: string;
 }): Promise<InitializeOrangeMoneyResponse> {
   const logger = paymentConfig.logger;
@@ -121,7 +121,7 @@ export async function initializeOmPayment({
  */
 const initializeOmPaymentInternal = async (params: {
   mobileInitParams: InitializeOrangeMoneyRequest;
-  paymentConfig: OrangeMoneyPaymentV2Params;
+  paymentConfig: OrangeMoneyPaymentParams;
   endPoint: string;
 }): Promise<{
   requestResult?: RequestResponse<GenericRequestResponseData>;

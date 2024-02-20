@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { OrangeMoneyPaymentStatus } from './constants';
 import { LoggerInterface } from '../../utils/logging_interface';
 import { TargetEnvironment } from '../../utils/utils';
+import { OrangeMoneyPaymentStatus } from './constants';
 
 /**
  * The provider generic response data of payment request of status verification request.
@@ -87,7 +87,7 @@ export const initPaymentBodySchema = Joi.object<InitPaymentBodySchema>({
   orderId: Joi.string().max(20).required(),
 });
 
-export interface OrangeMoneyPaymentV2Params {
+export interface OrangeMoneyPaymentParams {
   targetEnvironment: TargetEnvironment;
   logger: LoggerInterface;
   apiUserName: string;

@@ -6,19 +6,19 @@ import {
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
   AccessTokenRequestResponse,
-  OrangeMoneyPaymentV2Params,
+  OrangeMoneyPaymentParams,
 } from '../utils/joi_schema';
 import { GetAccessTokenResponse } from '../utils/request_model';
 
 /**
  * Gets the access token for the API.
  *
- * @param {OrangeMoneyPaymentV2Params} paymentConfig - The payment configuration.
+ * @param {OrangeMoneyPaymentParams} paymentConfig - The payment configuration.
  * @param {string} endPoint - The end point route.
  * @return {Promise<GetAccessTokenResponse>} The access token response.
  */
 export const getAccessToken = async (
-  paymentConfig: OrangeMoneyPaymentV2Params,
+  paymentConfig: OrangeMoneyPaymentParams,
   endPoint: string
 ): Promise<GetAccessTokenResponse> => {
   const logger = paymentConfig.logger;
