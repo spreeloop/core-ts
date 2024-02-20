@@ -101,7 +101,7 @@ logger.error('This is an error message');
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/spreeloop/logging/issues).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/spreeloop/core-ts/issues).
 
 ## Show your support
 
