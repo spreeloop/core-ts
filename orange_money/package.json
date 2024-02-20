@@ -1,8 +1,12 @@
 {
   "name": "@spreeloop/orange_money",
-  "version": "0.1.0",
+  "version": "1.0.4",
   "description": "A orange money api integration package",
-  "git repository": "https://github.com/spreeloop/core-ts/orange_money",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spreeloop/core-ts"
+  },
+  "homepage":"https://github.com/spreeloop/core-ts/tree/master/orange_money",
   "author": "Spreeloop",
   "scripts": {
     "lint": "eslint --max-warnings=0 --ext .js,.ts .",

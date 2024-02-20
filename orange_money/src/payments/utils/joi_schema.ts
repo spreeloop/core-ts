@@ -87,7 +87,7 @@ export const initPaymentBodySchema = Joi.object<InitPaymentBodySchema>({
   orderId: Joi.string().max(20).required(),
 });
 
-export interface OrangeMoneyPaymentV2Params {
+export interface OrangeMoneyPaymentParams {
   targetEnvironment: TargetEnvironment;
   logger: LoggerInterface;
   apiUserName: string;

@@ -1,25 +1,25 @@
 import { getAccessToken } from '../operations/get_access_token';
 import { getPayToken } from '../operations/get_pay_token';
 import { getPaymentStatus } from '../operations/get_payment_status';
-import { OrangeMoneyPaymentV2Params } from '../utils/joi_schema';
+import { OrangeMoneyPaymentParams } from '../utils/joi_schema';
 
 import { initializeOmPayment } from '../operations/initialize_om_payment';
+import { OrangeMoneyPaymentInterface } from '../payments';
 import { Routes } from '../routes/routes';
 import {
   GetAccessTokenResponse,
   GetOrangeMoneyPaymentRequest,
   GetOrangeMoneyPaymentResponse,
+  GetPayTokenResponse,
   InitializeOrangeMoneyRequest,
   InitializeOrangeMoneyResponse,
-  GetPayTokenResponse,
 } from '../utils/request_model';
-import { OrangeMoneyPaymentInterface } from '../payments';
 
 /**
  * Implements the orange money live payment.
  */
 export class OrangeMoneyPaymentLive implements OrangeMoneyPaymentInterface {
-  protected readonly config: OrangeMoneyPaymentV2Params;
+  protected readonly config: OrangeMoneyPaymentParams;
   protected readonly route: Routes;
 
   /**
@@ -27,7 +27,7 @@ export class OrangeMoneyPaymentLive implements OrangeMoneyPaymentInterface {
    *
    * @param {PaymentConfig} config - The configuration for the PaymentConfig instance.
    */
-  constructor(config: OrangeMoneyPaymentV2Params) {
+  constructor(config: OrangeMoneyPaymentParams) {
     this.config = config;
     this.route = new Routes(config.orangeMoneyVersion);
   }

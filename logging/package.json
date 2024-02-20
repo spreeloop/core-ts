@@ -1,8 +1,14 @@
 {
   "name": "@spreeloop/logging",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "spreeloop core logging package",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spreeloop/core-ts"
+  },
+  "homepage":"https://github.com/spreeloop/core-ts/tree/master/logging",
   "author": "Spreeloop",
+  "test command": "jest",
   "keywords": [
     "logging",
     "debug",

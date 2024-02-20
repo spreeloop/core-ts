@@ -1,4 +1,3 @@
-import { Logger } from '@spreeloop-core/logging';
 import * as requests from '../../utils/https';
 
 import { TargetEnvironment } from '../../utils/utils';
@@ -12,7 +11,7 @@ const payTokenResponse: PayTokenRequestResponse = {
   },
 };
 
-const logger = new Logger();
+const logger = console;
 
 describe('Test the generation of payToken', () => {
   it('Generate the payToken failed due to invalid credential.', async () => {
