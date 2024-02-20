@@ -1,4 +1,3 @@
-import { Logger } from '../../../../logging/src/logging';
 import * as requests from '../../utils/https';
 import { TargetEnvironment } from '../../utils/utils';
 import { AccessTokenRequestResponse } from '../utils/joi_schema';
@@ -12,7 +11,7 @@ const mobileAccessTokenResponse: AccessTokenRequestResponse = {
   scope: 'read write',
 };
 
-const logger = new Logger();
+const logger = console;
 describe('Test the generation of access-token', () => {
   it('Generates the access token failed', async () => {
     jest.spyOn(requests, 'postRequest').mockResolvedValue({

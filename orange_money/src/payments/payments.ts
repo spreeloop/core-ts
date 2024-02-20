@@ -1,7 +1,7 @@
 import { TargetEnvironment } from '../utils/utils';
 import { OrangeMoneyPaymentFake } from './implementations/fake';
 import { OrangeMoneyPaymentLive } from './implementations/live';
-import { OrangeMoneyPaymentV2Params } from './utils/joi_schema';
+import { OrangeMoneyPaymentParams } from './utils/joi_schema';
 import {
   GetAccessTokenResponse,
   GetOrangeMoneyPaymentRequest,
@@ -57,11 +57,11 @@ export interface OrangeMoneyPaymentInterface {
 /**
  *  Creates a orange money payment.
  */
-export class OrangeMoneyPaymentV2 {
+export class OrangeMoneyPayment {
   /**
    * Create a new payment using the provided configuration.
    *
-   * @param {OrangeMoneyPaymentV2Params} config - The payment configuration.
+   * @param {OrangeMoneyPaymentParams} config - The payment configuration.
    *  - {TargetEnvironment} config.targetEnvironment the target environment.
    *  - {string} config.apiUserName channelUser api username.
    *  - {string} config.apiPassword channelUser api password.
@@ -72,7 +72,7 @@ export class OrangeMoneyPaymentV2 {
    * @return {OrangeMoneyPaymentInterface} The created payment.
    */
   static createPayment(
-    config: OrangeMoneyPaymentV2Params
+    config: OrangeMoneyPaymentParams
   ): OrangeMoneyPaymentInterface {
     switch (config.targetEnvironment) {
       case TargetEnvironment.prod:
