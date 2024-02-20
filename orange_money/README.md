@@ -1,4 +1,14 @@
-# Y-note Orange Money Node.js Integration Module
+
+# Welcome to @spreeloop/orange_money 👋
+
+<p>
+  <a href="https://www.npmjs.com/package/@spreeloop/orange_money" target="_blank">
+    <img alt="Version" src="https://img.shields.io/npm/v/@spreeloop/orange_money.svg">
+  </a>
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+</p>
 
 The Y-note Orange Money Node.js Integration Module is a powerful toolkit
 designed to simplify the integration of Orange Money's payment capabilities
@@ -24,6 +34,12 @@ your Node.js project using npm:
 
 ```bash
 npm install @spreeloop/orange_money
+```
+
+## Run tests
+
+```sh
+npm run test
 ```
 
 ## Table content
@@ -152,18 +168,25 @@ Sometimes Orange Money API will not notify your endpoint url, so we recommend to
 set up a system that will run `getOrangeMoneyPaymentStatus` every 2 min
 depending on your choice.
 
-## Contributing
-
-Contributions to the Orange Money Node.js Integration Module are welcome!
- Please feel free to open issues or submit pull requests to contribute to the
-  development of this module.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
- for details.
+---
+For more information and detailed API documentation, please refer to the
+official [Y-Note Merchant payment documentation](<https://mega.nz/folder/83dCDKSK#LqI2j3Wgt6s9xJjtH5K9lA>)
 
 ---
 
-For more information and detailed API documentation, please refer to the
-official [Y-Note Merchant payment documentation](<https://mega.nz/folder/83dCDKSK#LqI2j3Wgt6s9xJjtH5K9lA>)
+## Author
+
+👤 **Spreeloop**
+
+- Website: spreeloop.com
+- Github: [@spreeloop](https://github.com/spreeloop)
+
+## 🤝 Contributing
+
+Contributions to the Orange Money Node.js Integration Module are welcome!
+ Please feel free to open [issues](https://github.com/spreeloop/core-ts/issues) or submit pull requests to contribute to the
+  development of this module.
+
+## Show your support
+
+Give a ⭐️ if this project helped you!

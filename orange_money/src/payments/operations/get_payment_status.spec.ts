@@ -1,4 +1,3 @@
-import { Logger } from '@spreeloop-core/logging';
 import * as requests from '../../utils/https';
 import { OrangeMoneyPaymentStatus } from '../utils/constants';
 
@@ -6,8 +5,7 @@ import { TargetEnvironment } from '../../utils/utils';
 import { GetOrangeMoneyPaymentRequest } from '../utils/request_model';
 import { getPaymentStatus } from './get_payment_status';
 
-const logger = new Logger();
-
+const logger = console;
 describe('Test the status verification', () => {
   const mobilePaymentParamForCheckStatus: GetOrangeMoneyPaymentRequest = {
     accessToken: '1e23bee1-37dc-3015-a7d6-cb70e566bd64',

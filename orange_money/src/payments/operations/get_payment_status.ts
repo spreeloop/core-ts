@@ -2,7 +2,7 @@ import { getRequest, isSuccessfulCodeResponse } from '../../utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
   GenericRequestResponseData,
-  OrangeMoneyPaymentV2Params,
+  OrangeMoneyPaymentParams,
 } from '../utils/joi_schema';
 import {
   GetOrangeMoneyPaymentRequest,
@@ -15,7 +15,7 @@ import {
  * @param {Object} options - The options object.
  * @param {GetOrangeMoneyPaymentRequest} options.mobileStatusVerificationParams - The parameters for mobile status verification.
  * @param {string} endPoint - The init payment end point.
- * @param {OrangeMoneyPaymentV2Params} paymentServiceConfig - The mobile payment config parameters.
+ * @param {OrangeMoneyPaymentParams} paymentServiceConfig - The mobile payment config parameters.
  *    - {TargetEnvironment} PaymentServiceConfig.targetEnvironment - The target environment.
  *    - {string} PaymentServiceConfig.apiUserName - The api user name.
  *    - {string} PaymentServiceConfig.xAuthToken - The x-auth-token.
@@ -30,7 +30,7 @@ export async function getPaymentStatus({
   endPoint,
 }: {
   mobileStatusVerificationParams: GetOrangeMoneyPaymentRequest;
-  paymentServiceConfig: OrangeMoneyPaymentV2Params;
+  paymentServiceConfig: OrangeMoneyPaymentParams;
   endPoint: string;
 }): Promise<GetOrangeMoneyPaymentResponse> {
   const logger = paymentServiceConfig.logger;
