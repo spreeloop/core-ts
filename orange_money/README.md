@@ -56,7 +56,7 @@ npm run test
   Payment instance.
 
 ```typescript
-import {OrangeMoneyPaymentV2} from  @spreeloop/orange_money;
+import {OrangeMoneyPayment} from  @spreeloop/orange_money;
 
 // Creates payment configuration
 const config = {
@@ -73,7 +73,7 @@ const config = {
   logger: console;
 };
 
-const payment = OrangeMoneyPaymentV2.createPayment(config);
+const payment = OrangeMoneyPayment.createPayment(config);
 ```
 
 - ### Generate access-token
