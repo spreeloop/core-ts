@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/orange_money",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A orange money api integration package",
   "repository": {
     "type": "git",
@@ -16,8 +16,12 @@
     "coverage": "jest --coverage"
   },
   "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
   "license": "MIT",
-  "types": "dist/index.d.ts",
+  
+ "types": "dist/index.d.ts",
   "type": "commonjs",
   "test command": "jest",
   "keywords": [
