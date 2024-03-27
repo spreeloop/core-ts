@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-import { Logger } from '../../../../logging/src/logging';
 import * as requests from '../../utils/https';
 import { DisbursementXTargetEnvironmentType } from '../utils/constants';
 import { transfer } from './transfer';
@@ -15,7 +14,7 @@ describe('transfer', () => {
         customerSecret: '',
         pin: '',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         webhook: '',
@@ -41,7 +40,7 @@ describe('transfer', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         webhook: 'https://example.com',
@@ -73,7 +72,7 @@ describe('transfer', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         webhook: 'https://example.com',
@@ -123,7 +122,7 @@ describe('transfer', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         webhook: 'https://example.com',
