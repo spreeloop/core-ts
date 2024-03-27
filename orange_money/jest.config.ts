@@ -28,10 +28,6 @@ const jestConfig: Config = {
   // The test environment that will be used for testing
   testEnvironment: 'node',
 
-  moduleNameMapper: {
-    '@spreeloop-core/logging': '<rootDir>../logging',
-  },
-
   // A list of paths to modules that run some code to configure or set up the testing framework
   // before each test file in the suite is executed.
   setupFilesAfterEnv: ['<rootDir>/jest.before-test.ts'],

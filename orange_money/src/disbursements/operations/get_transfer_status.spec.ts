@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-import { Logger } from '../../../../logging/src/logging';
 import * as requests from '../../utils/https';
 import { DisbursementXTargetEnvironmentType } from '../utils/constants';
 import { DisbursementApiRawStatus, DisbursementStatus } from '../utils/status';
@@ -16,7 +15,7 @@ describe('getTransferStatus', () => {
         customerSecret: '',
         pin: '',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         token: 55 as unknown as string,
@@ -45,7 +44,7 @@ describe('getTransferStatus', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         token: 'token',
@@ -108,7 +107,7 @@ describe('getTransferStatus', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
       params: {
         token: 'token',

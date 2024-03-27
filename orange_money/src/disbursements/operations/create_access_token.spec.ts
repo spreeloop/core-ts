@@ -1,5 +1,4 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import { Logger } from '../../../../logging/src/logging';
 import * as requests from '../../utils/https';
 import { DisbursementXTargetEnvironmentType } from '../utils/constants';
 import { Token, createAccessToken } from './create_access_token';
@@ -16,7 +15,7 @@ describe('createAccessToken', () => {
         customerSecret: '',
         pin: '',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
     });
     expect(result.data).toBeUndefined();
@@ -39,7 +38,7 @@ describe('createAccessToken', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
     });
 
@@ -72,7 +71,7 @@ describe('createAccessToken', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
-        logger: new Logger(),
+        logger: console,
       },
     });
 

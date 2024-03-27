@@ -34,14 +34,4 @@ module.exports = {
     ],
     'prettier/prettier': 2,
   },
-  settings: {
-    'import/resolver': {
-      'custom-alias': {
-        extensions: ['.ts'],
-        alias: {
-          '@spreeloop-core/logging': '../logging',
-        },
-      },
-    },
-  },
 };
