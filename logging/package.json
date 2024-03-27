@@ -6,6 +6,11 @@
     "type": "git",
     "url": "https://github.com/spreeloop/core-ts"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "homepage": "https://github.com/spreeloop/core-ts/tree/master/logging",
   "author": "Spreeloop",
   "test command": "jest",
