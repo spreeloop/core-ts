@@ -1,12 +1,12 @@
 {
   "name": "@spreeloop/logging",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "spreeloop core logging package",
   "repository": {
     "type": "git",
     "url": "https://github.com/spreeloop/core-ts"
   },
-  "homepage":"https://github.com/spreeloop/core-ts/tree/master/logging",
+  "homepage": "https://github.com/spreeloop/core-ts/tree/master/logging",
   "author": "Spreeloop",
   "test command": "jest",
   "keywords": [
@@ -15,6 +15,8 @@
     "logger"
   ],
   "scripts": {
+    "prepublish": "tsc",
+    "build": "tsc",
     "lint": "eslint --max-warnings=0 --ext .js,.ts .",
     "test": "jest",
     "coverage": "jest --coverage"
