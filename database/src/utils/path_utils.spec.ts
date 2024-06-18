@@ -80,14 +80,14 @@ describe('isValidDocumentPath', () => {
 
 describe('isValidCollectionPath', () => {
   it('should returns true if the collection path is valid', () => {
-    //const response1 = isValidCollectionPath('id-01');
-    //const response2 = isValidCollectionPath('collection-name/document-id/col');
+    // const response1 = isValidCollectionPath('id-01');
+    // const response2 = isValidCollectionPath('collection-name/document-id/col');
     const response3 = isValidCollectionPath('/id-01');
-    //const response4 = isValidCollectionPath('/id-01/');
-    //expect(response1).toBe(true);
-    //expect(response2).toBe(true);
+    // const response4 = isValidCollectionPath('/id-01/');
+    // expect(response1).toBe(true);
+    // expect(response2).toBe(true);
     expect(response3).toBe(true);
-    //expect(response4).toBe(true);
+    // expect(response4).toBe(true);
   });
 
   it('should returns false if the collection path is not valid', () => {
