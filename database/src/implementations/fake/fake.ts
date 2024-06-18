@@ -163,15 +163,19 @@ function allFiltersMatch(
         comparableData == docQuery.value) ||
       (condition == '>' &&
         !(docQuery.value instanceof Array) &&
+        docQuery.value &&
         comparableData > docQuery.value) ||
       (condition == '>=' &&
         !(docQuery.value instanceof Array) &&
+        docQuery.value &&
         comparableData >= docQuery.value) ||
       (condition == '<' &&
         !(docQuery.value instanceof Array) &&
+        docQuery.value &&
         comparableData < docQuery.value) ||
       (condition == '<=' &&
         !(docQuery.value instanceof Array) &&
+        docQuery.value &&
         comparableData <= docQuery.value) ||
       (condition == '!=' &&
         !(docQuery.value instanceof Array) &&

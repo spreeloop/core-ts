@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/database",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Wrapper for accessing database providers.",
   "author": "Spreeloop",
   "test command": "jest",
