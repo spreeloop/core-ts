@@ -5,7 +5,7 @@ import {
 
 describe('Test regex merchant phone number', () => {
   test('Merchant phone number regex matches valid numbers', () => {
-    const validNumbers = ['699947943', '237699947943'];
+    const validNumbers = ['699947943', '237699947943', '237689947943'];
     validNumbers.forEach((number) => {
       expect(merchantPhoneNumberRegex.test(number)).toBe(true);
     });
@@ -20,7 +20,7 @@ describe('Test regex merchant phone number', () => {
 });
 describe('Test regex orange money phone number without country code', () => {
   test('Oman phone number without country code regex matches valid numbers', () => {
-    const validNumbers = ['696512345', '696898765'];
+    const validNumbers = ['696512345', '696898765', '686898765'];
     validNumbers.forEach((number) => {
       expect(orangeMoneyPhoneNumberWithoutCountryCodeRegex.test(number)).toBe(
         true
