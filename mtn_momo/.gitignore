@@ -1,0 +1,12 @@
+# Node.js dependency directory
+node_modules/
+
+# Compiled JavaScript files
+dist/
+
+# Coverage generated
+coverage/
+.nyc_output/
+
+package-lock.json
+
