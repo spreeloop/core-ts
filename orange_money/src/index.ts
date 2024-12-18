@@ -11,3 +11,4 @@ export {
   OrangeMoneyPaymentStatus,
 } from './payments/utils/constants';
 export { OrangeMoneyPaymentConfigs } from './payments/utils/joi_schema';
+export { TargetEnvironment } from './utils/utils';
