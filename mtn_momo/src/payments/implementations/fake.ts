@@ -6,7 +6,7 @@ import {
   GetMtnMomoPaymentResponse,
   InitializeMtnMomoPaymentRequest,
   InitializeMtnMomoResponse,
-  MtnMomoPaymentParams,
+  MtnMomoPaymentConfigs,
 } from "../utils/request_model";
 import { MtnMomoInterface } from "../payments";
 
@@ -14,15 +14,15 @@ import { MtnMomoInterface } from "../payments";
  * Implements the MTN MOMO fake payment for testing purposes.
  */
 export class MtnMomoPaymentFake implements MtnMomoInterface {
-  protected readonly config: MtnMomoPaymentParams;
+  protected readonly config: MtnMomoPaymentConfigs;
   protected readonly route: Routes;
 
   /**
    * Creates a new instance of the MtnMomoPaymentFake class.
    *
-   * @param {MtnMomoPaymentParams} config - The configuration for the payment instance.
+   * @param {MtnMomoPaymentConfigs} config - The configuration for the payment instance.
    */
-  constructor(config: MtnMomoPaymentParams) {
+  constructor(config: MtnMomoPaymentConfigs) {
     this.config = config;
     this.route = new Routes();
   }

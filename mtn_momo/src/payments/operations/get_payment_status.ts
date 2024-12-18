@@ -11,7 +11,7 @@ import {
   GetMtnMomoPaymentRequest,
   GetMtnMomoPaymentResponse,
   GetStatusRequestResponseDataFromMtn,
-  MtnMomoPaymentParams,
+  MtnMomoPaymentConfigs,
 } from "../utils/request_model";
 
 /**
@@ -30,7 +30,7 @@ export async function getPaymentStatus({
   accessToken,
 }: {
   mobileStatusVerificationParams: GetMtnMomoPaymentRequest;
-  paymentServiceConfig: MtnMomoPaymentParams;
+  paymentServiceConfig: MtnMomoPaymentConfigs;
   endPoint: string;
   accessToken: string;
 }): Promise<GetMtnMomoPaymentResponse> {

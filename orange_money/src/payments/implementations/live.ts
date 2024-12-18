@@ -1,7 +1,7 @@
 import { getAccessToken } from '../operations/get_access_token';
 import { getPayToken } from '../operations/get_pay_token';
 import { getPaymentStatus } from '../operations/get_payment_status';
-import { OrangeMoneyPaymentParams } from '../utils/joi_schema';
+import { OrangeMoneyPaymentConfigs } from '../utils/joi_schema';
 
 import { initializeOmPayment } from '../operations/initialize_om_payment';
 import { OrangeMoneyPaymentInterface } from '../payments';
@@ -19,7 +19,7 @@ import {
  * Implements the orange money live payment.
  */
 export class OrangeMoneyPaymentLive implements OrangeMoneyPaymentInterface {
-  protected readonly config: OrangeMoneyPaymentParams;
+  protected readonly config: OrangeMoneyPaymentConfigs;
   protected readonly route: Routes;
 
   /**
@@ -27,7 +27,7 @@ export class OrangeMoneyPaymentLive implements OrangeMoneyPaymentInterface {
    *
    * @param {PaymentConfig} config - The configuration for the PaymentConfig instance.
    */
-  constructor(config: OrangeMoneyPaymentParams) {
+  constructor(config: OrangeMoneyPaymentConfigs) {
     this.config = config;
     this.route = new Routes(config.orangeMoneyVersion);
   }

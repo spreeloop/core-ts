@@ -1,7 +1,7 @@
 import { postRequest } from '../../utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
-  OrangeMoneyPaymentParams,
+  OrangeMoneyPaymentConfigs,
   PayTokenRequestResponse,
 } from '../utils/joi_schema';
 import { GetPayTokenResponse } from '../utils/request_model';
@@ -9,13 +9,13 @@ import { GetPayTokenResponse } from '../utils/request_model';
 /**
  * Gets a pay token using the provided payment configuration.
  *
- * @param {OrangeMoneyPaymentParams} paymentConfig - The payment configuration.
- * @param {OrangeMoneyPaymentParams} accessToken - The payment configuration.
+ * @param {OrangeMoneyPaymentConfigs} paymentConfig - The payment configuration.
+ * @param {string} accessToken - The payment configuration.
  * @param {string} endPoint - The payToken endpoint.
  * @return {Promise<GetPayTokenResponse>} The generated pay token response.
  */
 export const getPayToken = async (
-  paymentConfig: OrangeMoneyPaymentParams,
+  paymentConfig: OrangeMoneyPaymentConfigs,
   accessToken: string,
   endPoint: string
 ): Promise<GetPayTokenResponse> => {

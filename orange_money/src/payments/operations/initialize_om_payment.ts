@@ -14,7 +14,7 @@ import {
 import {
   GenericRequestResponseData,
   InitPaymentBodySchema,
-  OrangeMoneyPaymentParams,
+  OrangeMoneyPaymentConfigs,
   initPaymentBodySchema,
 } from '../utils/joi_schema';
 import {
@@ -43,7 +43,7 @@ export async function initializeOmPayment({
   endPoint,
 }: {
   mobileInitParams: InitializeOrangeMoneyRequest;
-  paymentConfig: OrangeMoneyPaymentParams;
+  paymentConfig: OrangeMoneyPaymentConfigs;
   endPoint: string;
 }): Promise<InitializeOrangeMoneyResponse> {
   const logger = paymentConfig.logger;
@@ -90,7 +90,7 @@ export async function initializeOmPayment({
     const errorData = requestResponse.data.data;
 
     logger.warn(
-      `[ORANGE MONEY] Initialization failed failed. Raison: ${errorData.inittxnmessage}`
+      `[ORANGE MONEY] Initialization failed failed. Reason: ${errorData.inittxnmessage}`
     );
     return {
       raw: requestResponse.data,
@@ -121,7 +121,7 @@ export async function initializeOmPayment({
  */
 const initializeOmPaymentInternal = async (params: {
   mobileInitParams: InitializeOrangeMoneyRequest;
-  paymentConfig: OrangeMoneyPaymentParams;
+  paymentConfig: OrangeMoneyPaymentConfigs;
   endPoint: string;
 }): Promise<{
   requestResult?: RequestResponse<GenericRequestResponseData>;

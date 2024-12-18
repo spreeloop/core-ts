@@ -1,7 +1,7 @@
 import { TargetEnvironment } from '../utils/utils';
 import { OrangeMoneyPaymentFake } from './implementations/fake';
 import { OrangeMoneyPaymentLive } from './implementations/live';
-import { OrangeMoneyPaymentParams } from './utils/joi_schema';
+import { OrangeMoneyPaymentConfigs } from './utils/joi_schema';
 import {
   GetAccessTokenResponse,
   GetOrangeMoneyPaymentRequest,
@@ -72,7 +72,7 @@ export class OrangeMoneyPayment {
    * @return {OrangeMoneyPaymentInterface} The created payment.
    */
   static createPayment(
-    config: OrangeMoneyPaymentParams
+    config: OrangeMoneyPaymentConfigs
   ): OrangeMoneyPaymentInterface {
     switch (config.targetEnvironment) {
       case TargetEnvironment.prod:

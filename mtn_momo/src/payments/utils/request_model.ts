@@ -4,7 +4,7 @@ import { OperationResponse } from "../../utils/operation_response";
 import { TargetEnvironment } from "../../utils/constants";
 import { MtnMomoFailedPaymentReason, MtnMomoPaymentStatus } from "./constants";
 
-export interface MtnMomoPaymentParams {
+export interface MtnMomoPaymentConfigs {
   /**
    * The target environment.
    */

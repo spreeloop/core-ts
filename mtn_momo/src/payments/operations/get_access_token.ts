@@ -4,7 +4,7 @@ import { ApiErrorType, RequestKey } from "../utils/constants";
 import {
   AccessTokenRequestResponseFromMtn,
   GetAccessTokenResponse,
-  MtnMomoPaymentParams,
+  MtnMomoPaymentConfigs,
 } from "../utils/request_model";
 
 /**
@@ -15,7 +15,7 @@ import {
  * @return {Promise<GetAccessTokenResponse>} The access token response.
  */
 export const getAccessToken = async (
-  paymentConfig: MtnMomoPaymentParams,
+  paymentConfig: MtnMomoPaymentConfigs,
   endPoint: string
 ): Promise<GetAccessTokenResponse> => {
   const logger = paymentConfig.logger;
