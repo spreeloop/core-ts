@@ -10,3 +10,4 @@ export {
   ApiErrorType,
   OrangeMoneyPaymentStatus,
 } from './payments/utils/constants';
+export { OrangeMoneyPaymentConfigs } from './payments/utils/joi_schema';

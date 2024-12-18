@@ -4,7 +4,7 @@ import { ApiErrorType, RequestKey } from "../utils/constants";
 import {
   InitializeMtnMomoPaymentRequest,
   InitializeMtnMomoResponse,
-  MtnMomoPaymentParams,
+  MtnMomoPaymentConfigs,
 } from "../utils/request_model";
 
 /**
@@ -27,7 +27,7 @@ export async function initializeMtnMomoPayment({
   accessToken,
 }: {
   mobileInitParams: InitializeMtnMomoPaymentRequest;
-  paymentConfig: MtnMomoPaymentParams;
+  paymentConfig: MtnMomoPaymentConfigs;
   endPoint: string;
   accessToken: string;
 }): Promise<InitializeMtnMomoResponse> {
@@ -92,7 +92,7 @@ export async function initializeMtnMomoPayment({
  */
 const initializeMtnMomoPaymentInternal = async (params: {
   mobileInitParams: InitializeMtnMomoPaymentRequest;
-  paymentConfig: MtnMomoPaymentParams;
+  paymentConfig: MtnMomoPaymentConfigs;
   endPoint: string;
   accessToken: string;
 }): Promise<InitializeMtnMomoResponse> => {

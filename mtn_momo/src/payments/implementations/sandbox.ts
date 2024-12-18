@@ -5,7 +5,7 @@ import {
   GetMtnMomoPaymentResponse,
   InitializeMtnMomoPaymentRequest,
   InitializeMtnMomoResponse,
-  MtnMomoPaymentParams,
+  MtnMomoPaymentConfigs,
 } from "../utils/request_model";
 import { TargetEnvironment } from "../../utils/constants";
 import { getAccessToken } from "../operations/get_access_token";
@@ -17,15 +17,15 @@ import { MtnMomoInterface } from "../payments";
  * Implements the MTN MOMO sandbox payment for testing in sandbox environment.
  */
 export class MtnMomoPaymentSandbox implements MtnMomoInterface {
-  protected readonly config: MtnMomoPaymentParams;
+  protected readonly config: MtnMomoPaymentConfigs;
   protected readonly route: Routes;
 
   /**
    * Creates a new instance of the MtnMomoPaymentSandbox class.
    *
-   * @param {MtnMomoPaymentParams} config - The configuration for the payment instance.
+   * @param {MtnMomoPaymentConfigs} config - The configuration for the payment instance.
    */
-  constructor(config: MtnMomoPaymentParams) {
+  constructor(config: MtnMomoPaymentConfigs) {
     this.config = config;
     this.route = new Routes(TargetEnvironment.sandbox);
   }

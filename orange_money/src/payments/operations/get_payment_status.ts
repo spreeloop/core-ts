@@ -2,7 +2,7 @@ import { getRequest, isSuccessfulCodeResponse } from '../../utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
   GenericRequestResponseData,
-  OrangeMoneyPaymentParams,
+  OrangeMoneyPaymentConfigs,
 } from '../utils/joi_schema';
 import {
   GetOrangeMoneyPaymentRequest,
@@ -30,7 +30,7 @@ export async function getPaymentStatus({
   endPoint,
 }: {
   mobileStatusVerificationParams: GetOrangeMoneyPaymentRequest;
-  paymentServiceConfig: OrangeMoneyPaymentParams;
+  paymentServiceConfig: OrangeMoneyPaymentConfigs;
   endPoint: string;
 }): Promise<GetOrangeMoneyPaymentResponse> {
   const logger = paymentServiceConfig.logger;

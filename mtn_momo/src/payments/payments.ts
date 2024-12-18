@@ -8,7 +8,7 @@ import {
   GetMtnMomoPaymentResponse,
   InitializeMtnMomoPaymentRequest,
   InitializeMtnMomoResponse,
-  MtnMomoPaymentParams,
+  MtnMomoPaymentConfigs,
 } from "./utils/request_model";
 
 /**
@@ -53,10 +53,10 @@ export class MtnMomoPayment {
   /**
    * Creates a new payment instance using the provided configuration.
    *
-   * @param {MtnMomoPaymentParams} config - The payment configuration
+   * @param {MtnMomoPaymentConfigs} config - The payment configuration
    * @returns {MtnMomoInterface} The created payment instance
    */
-  static createPayment(config: MtnMomoPaymentParams): MtnMomoInterface {
+  static createPayment(config: MtnMomoPaymentConfigs): MtnMomoInterface {
     switch (config.targetEnvironment) {
       case TargetEnvironment.prod:
         return new MtnMomoPaymentLive(config);
