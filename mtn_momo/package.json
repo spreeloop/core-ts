@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/mtn_momo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A mtn momo api integration package",
   "repository": {
     "type": "git",
