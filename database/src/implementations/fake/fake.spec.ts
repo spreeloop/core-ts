@@ -24,6 +24,70 @@ const fakePromotion = {
 
 type Promotion = typeof fakePromotion;
 
+describe('getNestedValue', () => {
+  it('should return the value for a valid dot-separated path', () => {
+    const obj = {
+      a: {
+        b: {
+          c: 42,
+        },
+      },
+    };
+    const result = exportedForTesting.getNestedValue(obj, 'a.b.c');
+    expect(result).toBe(42);
+  });
+
+  it('should return undefined for an invalid path', () => {
+    const obj = {
+      a: {
+        b: {
+          c: 42,
+        },
+      },
+    };
+    const result = exportedForTesting.getNestedValue(obj, 'a.b.x');
+    expect(result).toBeUndefined();
+  });
+
+  it('should return undefined if part of the path is not an object', () => {
+    const obj = {
+      a: {
+        b: 'notAnObject',
+      },
+    };
+    const result = exportedForTesting.getNestedValue(obj, 'a.b.c');
+    expect(result).toBeUndefined();
+  });
+
+  it('should return the root object for an empty path', () => {
+    const obj = { a: 1 };
+    const result = exportedForTesting.getNestedValue(obj, '');
+    expect(result).toBeUndefined();
+  });
+
+  it('should handle paths with a single key', () => {
+    const obj = { a: 42 };
+    const result = exportedForTesting.getNestedValue(obj, 'a');
+    expect(result).toBe(42);
+  });
+
+  it('should return undefined if the object is empty', () => {
+    const obj = {};
+    const result = exportedForTesting.getNestedValue(obj, 'a.b.c');
+    expect(result).toBeUndefined();
+  });
+
+  it('should handle nested objects with arrays correctly', () => {
+    const obj = {
+      a: {
+        b: [{ c: 42 }, { d: 99 }],
+      },
+    };
+    const result = exportedForTesting.getNestedValue(obj, 'a.b.0.c');
+    expect(result).toBe(42);
+  });
+});
+
 describe('deepClone', () => {
   it('should return a deep object clone', () => {
     const data = { deep: { key: 'value' } };
