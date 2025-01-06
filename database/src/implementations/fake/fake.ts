@@ -96,7 +96,7 @@ function sortByProperty<T = unknown>(
  * Recursively find a collection with a given name [collectionID] in the given map.
  * @param {Record<string, unknown>} currentMap The map where we want to find a sub collection.
  * @param {string} parentPath The parent document path
- * @param {string} collectionID The name of the collection whe wan to find.
+ * @param {string} collectionID The name of the collection that we want to find.
  * @param {OnValueCallback} onValueCallback A callback
  * method to call when we found a matching collection.
  * @return {void}
@@ -144,6 +144,28 @@ function recursivelyFindCollection(
 }
 
 /**
+ * Retrieves the value from a nested object based on a dot-separated path.
+ *
+ * @param {Record<string, unknown>} obj - The object to navigate.
+ * @param {string} path - The dot-separated string representing the path to the desired value.
+ * @return {unknown} - The value at the specified path, or `undefined` if the path is invalid.
+ */
+function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+  const keys = path.split('.');
+  let current = obj;
+
+  for (const key of keys) {
+    if (current && typeof current === 'object' && key in current) {
+      current = current[key] as Record<string, unknown>;
+    } else {
+      // Return undefined if the path is invalid.
+      return undefined;
+    }
+  }
+  return current;
+}
+
+/**
  * Verifies if the provided data match all given filter.
  * @param {QueryFilter[]} filters The list of filter we wan apply.
  * @param {Record<string, unknown>} value The data to check.
@@ -155,7 +177,7 @@ function allFiltersMatch(
 ): boolean {
   for (const docQuery of filters) {
     const condition = docQuery.opStr;
-    const valueData = value[docQuery.fieldPath];
+    const valueData = getNestedValue(value, docQuery.fieldPath);
     const comparableData = valueData as string | number;
     if (
       (condition == '==' &&
@@ -483,4 +505,5 @@ export const exportedForTesting = {
   isValidCollection,
   recursivelyFindCollection,
   allFiltersMatch,
+  getNestedValue,
 };
