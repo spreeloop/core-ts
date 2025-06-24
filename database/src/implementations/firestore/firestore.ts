@@ -13,7 +13,6 @@ import type {
   DocumentReference,
   DocumentSnapshot,
   DocumentData,
-  UpdateData,
   CollectionGroup,
 } from 'firebase-admin/lib/firestore';
 import {
@@ -302,28 +301,36 @@ export class FirestoreDatabase implements Database {
     return this.firestoreDB.runTransaction<T>((transaction) => {
       const getCollectionQuery = this.getCollectionQuery.bind(this);
       const getRecordQuery = this.getRecordQuery.bind(this);
+
       const customTransaction: DatabaseTransaction = {
         getCollection: async <T, R>(data: GetCollectionRequest<T, R>) => {
           const query = getCollectionQuery<T, R>(data);
-          return query.transform(await transaction.get<T>(query.ref));
+          const snapshot = await transaction.get<T, DocumentData>(query.ref);
+          return query.transform(snapshot);
         },
+
         getRecord: async <T>(path: string) => {
           const query = getRecordQuery<T>(path);
-          return query.transform(await transaction.get<T>(query.ref));
+          const snapshot = await transaction.get<T, DocumentData>(query.ref);
+          return query.transform(snapshot);
         },
+
         updateRecord: <T>(path: string, data: Partial<T>) => {
           const query = getRecordQuery<T>(path);
-          transaction.update<T>(query.ref, data as UpdateData<T>);
+          transaction.update<T, DocumentData>(query.ref, data);
         },
+
         createRecord: <T>(path: string, data: T) => {
           const query = getRecordQuery<T>(path);
-          transaction.create<T>(query.ref, data);
+          transaction.create<T, DocumentData>(query.ref, data);
         },
+
         setRecord: <T>(path: string, data: Partial<T>) => {
           const query = getRecordQuery<T>(path);
-          transaction.set<T>(query.ref, data, { merge: true });
+          transaction.set<T, DocumentData>(query.ref, data, { merge: true });
         },
       };
+
       return handler(customTransaction);
     });
   }
