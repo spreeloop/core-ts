@@ -9,6 +9,11 @@ import { orangeMoneyPhoneNumberWithoutCountryCodeRegex } from '../utils/regex';
 
 export enum TransferMethod {
   OrangeMoney = 'OrangeMoney',
+  Deposit = 'Deposit',
+}
+
+export enum DebitPolicyMethod {
+  DepositAccOnly = 'deposit_acc_only',
 }
 
 export interface TransferRequest {
@@ -16,6 +21,9 @@ export interface TransferRequest {
   amount: number;
   customerPhone: string;
   customerName: string;
+  feesIncluded?: 'Yes' | 'No' | null;
+  finalCustomerNameAccuracy?: number | null;
+  refundMethod?: TransferMethod | null;
   token: string;
 }
 
@@ -26,6 +34,9 @@ export const TransferRequestSchema = Joi.object<TransferRequest>({
     .pattern(orangeMoneyPhoneNumberWithoutCountryCodeRegex)
     .required(),
   customerName: Joi.string().required(),
+  feesIncluded: Joi.string().allow(null),
+  finalCustomerNameAccuracy: Joi.number().integer().min(0).max(100).allow(null),
+  refundMethod: Joi.string().allow(null),
   token: Joi.string().required(),
 });
 
@@ -95,7 +106,7 @@ export async function transfer({
   const header = {
     Authorization: `Bearer ${paramsValues.token}`,
   };
-  const body = {
+  const body: Record<string, string> = {
     customerkey: configValues.customerKey,
     customersecret: configValues.customerSecret,
     channelUserMsisdn: configValues.channelUserMsisdn,
@@ -105,7 +116,17 @@ export async function transfer({
     final_customer_phone: paramsValues.customerPhone,
     final_customer_name: paramsValues.customerName,
     refund_method: TransferMethod.OrangeMoney,
+    fees_included: paramsValues.feesIncluded ?? 'No',
   };
+
+  if (paramsValues.finalCustomerNameAccuracy) {
+    body.final_customer_name_accuracy =
+      paramsValues.finalCustomerNameAccuracy.toString();
+  }
+
+  if (paramsValues.refundMethod === TransferMethod.Deposit) {
+    body.debit_policy = DebitPolicyMethod.DepositAccOnly;
+  }
 
   const response: RequestResponse<TransferResponseRawData> = await postRequest({
     logger: logger,
