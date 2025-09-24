@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/database",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Wrapper for accessing database providers.",
   "author": "Spreeloop",
   "test command": "jest",
@@ -24,12 +24,12 @@
     "nodejs"
   ],
   "dependencies": {
-    "firebase-admin": "^11.2.0"
+    "firebase-admin": "^13.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.3",
-    "@babel/preset-env": "^7.23.3",
-    "@babel/preset-typescript": "^7.23.3",
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-typescript": "^7.27.1",
     "@types/jest": "^28.1.8",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.3",
@@ -39,6 +39,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^30.0.3",
     "prettier": "^2.6.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
