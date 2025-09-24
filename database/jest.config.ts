@@ -32,7 +32,7 @@ export default {
 
   // A transformer is a module that provides a synchronous function for transforming source files.
   transform: {
-    '^.+\\.(ts|js)$': require.resolve('babel-jest'),
+    '^.+\\.(ts)$': 'babel-jest',
   },
 
   // Those file will not be transformed
