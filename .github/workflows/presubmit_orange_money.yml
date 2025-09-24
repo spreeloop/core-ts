@@ -1,4 +1,4 @@
-name: Pre-Submit (Database)
+name: Pre-Submit (Orange Money)
 on:
   workflow_call:
 
@@ -14,8 +14,8 @@ jobs:
         with:
           filters: |
             src:
-              - '.github/workflows/presubmit_database.yml'
-              - 'database/**/*.ts'
+              - '.github/workflows/presubmit_orange_money.yml'
+              - 'orange_money/**/*.ts'
 
   unit-tests:
     needs: changes
@@ -24,13 +24,13 @@ jobs:
     timeout-minutes: 30
     defaults:
       run:
-        working-directory: ./database
+        working-directory: ./orange_money
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24.0.0
           cache: "npm"
-          cache-dependency-path: "database/package-lock.json"
+          cache-dependency-path: "orange_money/package-lock.json"
       - run: npm ci
       - run: npm run test
