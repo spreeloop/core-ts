@@ -1,10 +1,15 @@
-import { QueryFilter } from '../../utils/query_filter';
+import { allFiltersMatch, getNestedValue } from '../../utils/query_filter';
 import {
   Database,
   DatabaseDocument,
   DatabaseTransaction,
+  DistanceMeasure,
+  FindNearestVectorsInCollectionRequest,
+  FindNearestVectorsInCollectionGroupRequest,
   GetCollectionGroupRequest,
   GetCollectionRequest,
+  Vector,
+  VectorSearchResult,
 } from '../../database';
 import {
   getDocumentId,
@@ -144,74 +149,87 @@ function recursivelyFindCollection(
 }
 
 /**
- * Retrieves the value from a nested object based on a dot-separated path.
- *
- * @param {Record<string, unknown>} obj - The object to navigate.
- * @param {string} path - The dot-separated string representing the path to the desired value.
- * @return {unknown} - The value at the specified path, or `undefined` if the path is invalid.
+ * Calculates the Euclidean distance between two vectors.
+ * @param {Vector} a First vector.
+ * @param {Vector} b Second vector.
+ * @return {number} Euclidean distance.
  */
-function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
-  const keys = path.split('.');
-  let current = obj;
-
-  for (const key of keys) {
-    if (current && typeof current === 'object' && key in current) {
-      current = current[key] as Record<string, unknown>;
-    } else {
-      // Return undefined if the path is invalid.
-      return undefined;
-    }
+function euclideanDistance(a: Vector, b: Vector): number {
+  if (a.length !== b.length) {
+    throw new Error('Vectors must have the same length');
   }
-  return current;
+  let sum = 0;
+  for (let i = 0; i < a.length; i++) {
+    sum += (a[i] - b[i]) ** 2;
+  }
+  return Math.sqrt(sum);
 }
 
 /**
- * Verifies if the provided data match all given filter.
- * @param {QueryFilter[]} filters The list of filter we wan apply.
- * @param {Record<string, unknown>} value The data to check.
- * @return {boolean} true if the value match the filter and false other wise.
+ * Calculates the Cosine similarity between two vectors.
+ * @param {Vector} a First vector.
+ * @param {Vector} b Second vector.
+ * @return {number} Cosine similarity (1 - cosine distance).
  */
-function allFiltersMatch(
-  filters: QueryFilter[],
-  value: Record<string, unknown>
-): boolean {
-  for (const docQuery of filters) {
-    const condition = docQuery.opStr;
-    const valueData = getNestedValue(value, docQuery.fieldPath);
-    const comparableData = valueData as string | number;
-    if (
-      (condition == '==' &&
-        !(docQuery.value instanceof Array) &&
-        comparableData == docQuery.value) ||
-      (condition == '>' &&
-        !(docQuery.value instanceof Array) &&
-        docQuery.value &&
-        comparableData > docQuery.value) ||
-      (condition == '>=' &&
-        !(docQuery.value instanceof Array) &&
-        docQuery.value &&
-        comparableData >= docQuery.value) ||
-      (condition == '<' &&
-        !(docQuery.value instanceof Array) &&
-        docQuery.value &&
-        comparableData < docQuery.value) ||
-      (condition == '<=' &&
-        !(docQuery.value instanceof Array) &&
-        docQuery.value &&
-        comparableData <= docQuery.value) ||
-      (condition == '!=' &&
-        !(docQuery.value instanceof Array) &&
-        comparableData != docQuery.value) ||
-      (condition == 'in' &&
-        docQuery.value instanceof Array &&
-        docQuery.value.indexOf(comparableData.toString()) !== -1)
-    ) {
-      continue;
-    } else {
-      return false;
-    }
+function cosineSimilarity(a: Vector, b: Vector): number {
+  if (a.length !== b.length) {
+    throw new Error('Vectors must have the same length');
   }
-  return true;
+  let dotProduct = 0;
+  let normA = 0;
+  let normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dotProduct += a[i] * b[i];
+    normA += a[i] ** 2;
+    normB += b[i] ** 2;
+  }
+  normA = Math.sqrt(normA);
+  normB = Math.sqrt(normB);
+  if (normA === 0 || normB === 0) {
+    return 0;
+  }
+  return 1 - dotProduct / (normA * normB); // Cosine distance
+}
+
+/**
+ * Calculates the Dot product distance between two vectors.
+ * @param {Vector} a First vector.
+ * @param {Vector} b Second vector.
+ * @return {number} Dot product distance.
+ */
+function dotProductDistance(a: Vector, b: Vector): number {
+  if (a.length !== b.length) {
+    throw new Error('Vectors must have the same length');
+  }
+  let dotProduct = 0;
+  for (let i = 0; i < a.length; i++) {
+    dotProduct += a[i] * b[i];
+  }
+  return -dotProduct; // Negative for distance (higher dot product is closer)
+}
+
+/**
+ * Calculates the distance based on the measure.
+ * @param {DistanceMeasure} measure Distance measure.
+ * @param {Vector} a First vector.
+ * @param {Vector} b Second vector.
+ * @return {number} Distance value.
+ */
+function calculateDistance(
+  measure: DistanceMeasure,
+  a: Vector,
+  b: Vector
+): number {
+  switch (measure) {
+    case DistanceMeasure.EUCLIDEAN:
+      return euclideanDistance(a, b);
+    case DistanceMeasure.COSINE:
+      return cosineSimilarity(a, b);
+    case DistanceMeasure.DOT_PRODUCT:
+      return dotProductDistance(a, b);
+    default:
+      throw new Error(`Unsupported distance measure: ${measure}`);
+  }
 }
 
 /**
@@ -408,6 +426,112 @@ export class FakeDatabase implements Database {
   }
 
   /**
+   * Finds the nearest vectors in a collection based on the query vector.
+   * @param {FindNearestVectorsInCollectionRequest} request The request parameters for vector search.
+   * @return {Promise<VectorSearchResult<T>[]>} Array of vector search results.
+   */
+  async findNearestVectorsInCollection<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    request: FindNearestVectorsInCollectionRequest
+  ): Promise<VectorSearchResult<T>[]> {
+    if (!isValidCollectionPath(request.collectionPath)) {
+      return [];
+    }
+    const collection = this.getRawData(request.collectionPath) as
+      | Record<string, T>
+      | undefined;
+    if (!collection || !isValidCollection(collection)) {
+      return [];
+    }
+    const entries = Object.entries(collection);
+    const candidates: { path: string; data: T; distance: number }[] = [];
+    for (const [documentId, document] of entries) {
+      if (
+        request.filters &&
+        !allFiltersMatch(request.filters, document as Record<string, unknown>)
+      ) {
+        continue;
+      }
+      const vectorValue = getNestedValue(
+        document as Record<string, unknown>,
+        request.vectorField
+      );
+      if (!Array.isArray(vectorValue)) {
+        continue; // Skip if no vector
+      }
+      const distance = calculateDistance(
+        request.distanceMeasure,
+        request.queryVector,
+        vectorValue as Vector
+      );
+      candidates.push({
+        path: `${request.collectionPath}/${documentId}`,
+        data: document,
+        distance,
+      });
+    }
+    // Sort by distance ascending
+    candidates.sort((a, b) => a.distance - b.distance);
+    // Apply limit
+    const limited = request.limit
+      ? candidates.slice(0, request.limit)
+      : candidates;
+    return limited.map(({ path, data, distance }) => ({
+      path,
+      data: deepClone(data) as T,
+      distance,
+    }));
+  }
+
+  /**
+   * Finds the nearest vectors in a collection group based on the query vector.
+   * @param {FindNearestVectorsInCollectionGroupRequest} request The request parameters for vector search.
+   * @return {Promise<VectorSearchResult<T>[]>} Array of vector search results.
+   */
+  async findNearestVectorsInCollectionGroup<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    request: FindNearestVectorsInCollectionGroupRequest
+  ): Promise<VectorSearchResult<T>[]> {
+    // Get all documents from the collection group
+    const documents = await this.getCollectionGroup({
+      collectionId: request.collectionId,
+      filters: request.filters, // Apply filters during fetch
+    });
+
+    // Compute distances client-side
+    const candidates: { path: string; data: T; distance: number }[] = [];
+    for (const doc of documents) {
+      const vectorValue = getNestedValue(
+        doc.data as Record<string, unknown>,
+        request.vectorField
+      );
+      if (!Array.isArray(vectorValue)) {
+        continue; // Skip if no vector
+      }
+      const distance = calculateDistance(
+        request.distanceMeasure,
+        request.queryVector,
+        vectorValue as Vector
+      );
+      candidates.push({
+        path: doc.path,
+        data: doc.data as T,
+        distance,
+      });
+    }
+
+    // Sort by distance ascending
+    candidates.sort((a, b) => a.distance - b.distance);
+    // Apply limit
+    const limited = request.limit
+      ? candidates.slice(0, request.limit)
+      : candidates;
+    return limited;
+  }
+
+  /**
    * Returns document's ids array of a given collection.
    * @param {string} collectionPath The path to the collection.
    * @return {string[]} Array of document ids found.
@@ -506,4 +630,8 @@ export const exportedForTesting = {
   recursivelyFindCollection,
   allFiltersMatch,
   getNestedValue,
+  euclideanDistance,
+  cosineSimilarity,
+  dotProductDistance,
+  calculateDistance,
 };

@@ -2,7 +2,7 @@ import { Firestore } from 'firebase-admin/lib/firestore';
 import { fakeFirestoreDatabase } from './fake_firestore_interface';
 import { QueryOrderBy } from '../../utils/query_order_by';
 import { QueryFilter } from '../../utils/query_filter';
-import { Database } from '../../database';
+import { Database, DistanceMeasure } from '../../database';
 
 describe('FirestoreDatabase', () => {
   const database = Database.createFirestore(
@@ -86,6 +86,44 @@ describe('FirestoreDatabase', () => {
         return 305;
       });
       expect(result).toBe(305);
+    });
+  });
+  describe('findNearestVectorsInCollection', () => {
+    it('should run successfully with valid request', async () => {
+      const results = await database.findNearestVectorsInCollection({
+        collectionPath: 'items',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+        limit: 5,
+      });
+      expect(Array.isArray(results)).toBe(true);
+      if (results.length > 0) {
+        expect(results[0]).toHaveProperty('path');
+        expect(results[0]).toHaveProperty('data');
+        expect(results[0]).toHaveProperty('distance');
+      }
+    });
+    it('should return empty for invalid collection', async () => {
+      const results = await database.findNearestVectorsInCollection({
+        collectionPath: 'invalid',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+      });
+      expect(results.length).toBe(0);
+    });
+  });
+  describe('findNearestVectorsInCollectionGroup', () => {
+    it('should return empty for collection group', async () => {
+      const results = await database.findNearestVectorsInCollectionGroup({
+        collectionId: 'items',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+      });
+      expect(Array.isArray(results)).toBe(true);
+      expect(results.length).toBe(0);
     });
   });
 });

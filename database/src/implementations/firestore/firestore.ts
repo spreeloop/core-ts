@@ -2,8 +2,11 @@ import {
   Database,
   DatabaseDocument,
   DatabaseTransaction,
-  GetCollectionGroupRequest,
+  FindNearestVectorsInCollectionRequest,
+  FindNearestVectorsInCollectionGroupRequest,
   GetCollectionRequest,
+  GetCollectionGroupRequest,
+  VectorSearchResult,
 } from '../../database';
 import type {
   Firestore,
@@ -14,6 +17,7 @@ import type {
   DocumentSnapshot,
   DocumentData,
   CollectionGroup,
+  QueryDocumentSnapshot,
 } from 'firebase-admin/lib/firestore';
 import {
   isValidCollectionPath,
@@ -273,6 +277,91 @@ export class FirestoreDatabase implements Database {
       filters,
       transform,
     }).get();
+  }
+
+  /**
+   * Finds the nearest vectors in a collection based on the query vector.
+   * Uses native Firestore vector search.
+   * @param {FindNearestVectorsInCollectionRequest} request The request parameters for vector search.
+   * @return {Promise<VectorSearchResult<T>[]>} Array of vector search results.
+   */
+  async findNearestVectorsInCollection<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    request: FindNearestVectorsInCollectionRequest
+  ): Promise<VectorSearchResult<T>[]> {
+    let query: Query<DocumentData> = this.firestoreDB.collection(
+      request.collectionPath
+    );
+
+    // Apply filters server-side
+    if (request.filters && request.filters.length > 0) {
+      for (const filter of request.filters) {
+        query = query.where(filter.fieldPath, filter.opStr, filter.value);
+      }
+    }
+
+    // Use native vector search
+    const vectorQuery = query.findNearest({
+      vectorField: request.vectorField,
+      queryVector: request.queryVector,
+      distanceMeasure: request.distanceMeasure,
+      limit: request.limit || 10,
+      distanceResultField: 'vector_distance',
+    });
+
+    const snapshot = await vectorQuery.get();
+    return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
+      const data = doc.data() as T;
+      const distance = data['vector_distance'] as number;
+      return {
+        path: doc.ref.path,
+        data,
+        distance,
+      };
+    });
+  }
+
+  /**
+   * Finds the nearest vectors in a collection group based on the query vector.
+   * Uses native Firestore vector search.
+   * @param {FindNearestVectorsInCollectionGroupRequest} request The request parameters for vector search.
+   * @return {Promise<VectorSearchResult<T>[]>} Array of vector search results.
+   */
+  async findNearestVectorsInCollectionGroup<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    request: FindNearestVectorsInCollectionGroupRequest
+  ): Promise<VectorSearchResult<T>[]> {
+    let query: Query<DocumentData> = this.firestoreDB.collectionGroup(
+      request.collectionId
+    );
+
+    // Apply filters server-side
+    if (request.filters && request.filters.length > 0) {
+      for (const filter of request.filters) {
+        query = query.where(filter.fieldPath, filter.opStr, filter.value);
+      }
+    }
+
+    // Use native vector search on collection group
+    const vectorQuery = query.findNearest({
+      vectorField: request.vectorField,
+      queryVector: request.queryVector,
+      distanceMeasure: request.distanceMeasure,
+      limit: request.limit || 10,
+    });
+
+    const snapshot = await vectorQuery.get();
+    return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
+      const data = doc.data() as T;
+      const distance = data['vector_distance'] as number;
+      return {
+        path: doc.ref.path,
+        data,
+        distance,
+      };
+    });
   }
 
   /**
