@@ -6,7 +6,7 @@ import {
 import { QueryOrderBy } from '../../utils/query_order_by';
 import { TestData } from './test_data';
 import { QueryFilter } from '../../utils/query_filter';
-import { Database } from '../../database';
+import { Database, DistanceMeasure } from '../../database';
 
 const fakePromotion = {
   isActive: false,
@@ -23,6 +23,30 @@ const fakePromotion = {
 };
 
 type Promotion = typeof fakePromotion;
+
+const vectorTestData = {
+  items: {
+    item1: { name: 'Item 1', embedding: [1, 0, 0] },
+    item2: { name: 'Item 2', embedding: [0, 1, 0] },
+    item3: { name: 'Item 3', embedding: [0, 0, 1] },
+    item4: { name: 'Item 4', embedding: [1, 1, 0] },
+  },
+};
+
+const vectorGroupTestData = {
+  root1: {
+    parent1: {
+      groups: {
+        doc1: { embedding: [1, 0] },
+      },
+    },
+    parent2: {
+      groups: {
+        doc2: { embedding: [0, 1] },
+      },
+    },
+  },
+};
 
 describe('getNestedValue', () => {
   it('should return the value for a valid dot-separated path', () => {
@@ -461,6 +485,108 @@ describe('FakeDatabase', () => {
     it("should return an empty list for collection that doesn't exist.", async () => {
       const ids = await fakeDatabase.getDocumentIds('promotion');
       expect(ids.length).toBe(0);
+    });
+  });
+  describe('findNearestVectorsInCollection', () => {
+    const fakeDatabase = Database.createFake(vectorTestData);
+    it('should find nearest vectors using EUCLIDEAN distance', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollection({
+        collectionPath: 'items',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+        limit: 2,
+      });
+      expect(results.length).toBe(2);
+      expect((results[0].data as { name: string }).name).toBe('Item 1');
+      expect((results[1].data as { name: string }).name).toBe('Item 4');
+      expect(results[0].distance).toBe(0);
+    });
+    it('should find nearest vectors using COSINE distance', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollection({
+        collectionPath: 'items',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.COSINE,
+        limit: 2,
+      });
+      expect(results.length).toBe(2);
+      expect((results[0].data as { name: string }).name).toBe('Item 1');
+    });
+    it('should find nearest vectors using DOT_PRODUCT distance', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollection({
+        collectionPath: 'items',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.DOT_PRODUCT,
+        limit: 2,
+      });
+      expect(results.length).toBe(2);
+      expect((results[0].data as { name: string }).name).toBe('Item 1');
+    });
+    it('should apply filters', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollection({
+        collectionPath: 'items',
+        vectorField: 'embedding',
+        queryVector: [0, 1, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+        filters: [new QueryFilter('name', '==', 'Item 2')],
+      });
+      expect(results.length).toBe(1);
+      expect((results[0].data as { name: string }).name).toBe('Item 2');
+    });
+    it('should return empty for invalid collection', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollection({
+        collectionPath: 'invalid',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+      });
+      expect(results.length).toBe(0);
+    });
+    it('should skip documents with non-array vectors', async () => {
+      const db = Database.createFake({
+        items: {
+          item1: { name: 'Item 1', embedding: [1, 0, 0] },
+          item2: { name: 'Item 2', embedding: 'not an array' },
+        },
+      });
+      const results = await db.findNearestVectorsInCollection({
+        collectionPath: 'items',
+        vectorField: 'embedding',
+        queryVector: [1, 0, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+      });
+      expect(results.length).toBe(1);
+      expect((results[0].data as { name: string }).name).toBe('Item 1');
+    });
+  });
+  describe('findNearestVectorsInCollectionGroup', () => {
+    const fakeDatabase = Database.createFake(vectorGroupTestData);
+    it('should find nearest vectors in collection group', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollectionGroup({
+        collectionId: 'groups',
+        vectorField: 'embedding',
+        queryVector: [1, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+      });
+      expect(results.length).toBe(2);
+      expect(results[0].path).toBe('root1/parent1/groups/doc1');
+      expect(results[0].distance).toBe(0);
+      expect(results[1].path).toBe('root1/parent2/groups/doc2');
+      expect(results[1].distance).toBeCloseTo(1.414, 3);
+    });
+    it('should find nearest vectors in collection group', async () => {
+      const results = await fakeDatabase.findNearestVectorsInCollectionGroup({
+        collectionId: 'groups',
+        vectorField: 'embedding',
+        queryVector: [1, 0],
+        distanceMeasure: DistanceMeasure.EUCLIDEAN,
+        limit: 1,
+      });
+      expect(results.length).toBe(1);
+      expect(results[0].path).toBe('root1/parent1/groups/doc1');
+      expect(results[0].distance).toBe(0);
     });
   });
 });

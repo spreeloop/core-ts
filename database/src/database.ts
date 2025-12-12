@@ -26,6 +26,38 @@ export type GetCollectionRequest<T = unknown, R = unknown> = {
   transform?: DatabaseDocumentTransform<T, R>;
 };
 
+export enum DistanceMeasure {
+  EUCLIDEAN = 'EUCLIDEAN',
+  COSINE = 'COSINE',
+  DOT_PRODUCT = 'DOT_PRODUCT',
+}
+
+export type Vector = number[];
+
+export type FindNearestVectorsInCollectionRequest = {
+  collectionPath: string;
+  vectorField: string;
+  queryVector: Vector;
+  distanceMeasure: DistanceMeasure;
+  limit?: number;
+  filters?: QueryFilter[];
+};
+
+export type FindNearestVectorsInCollectionGroupRequest = {
+  collectionId: string;
+  vectorField: string;
+  queryVector: Vector;
+  distanceMeasure: DistanceMeasure;
+  limit?: number;
+  filters?: QueryFilter[];
+};
+
+export type VectorSearchResult<T = unknown> = {
+  path: string;
+  data: T;
+  distance: number;
+};
+
 export type DatabaseTransaction = {
   getCollection: <T, R>(data: GetCollectionRequest<T, R>) => Promise<R[]>;
   getRecord: <T>(path: string) => Promise<DatabaseDocument<T | undefined>>;
@@ -124,6 +156,29 @@ export abstract class Database {
     orderBy,
     transform,
   }: GetCollectionGroupRequest<T, R>): Promise<R[]>;
+
+  /**
+   * Finds the nearest vectors in a collection based on the query vector.
+   * @param request The request parameters for vector search.
+   * @return Array of vector search results.
+   */
+  abstract findNearestVectorsInCollection<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    request: FindNearestVectorsInCollectionRequest
+  ): Promise<VectorSearchResult<T>[]>;
+
+  /**
+   * Finds the nearest vectors in a collection group based on the query vector.
+   * Note: This may not be supported by all implementations.
+   * @param request The request parameters for vector search.
+   * @return Array of vector search results.
+   */
+  abstract findNearestVectorsInCollectionGroup<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    request: FindNearestVectorsInCollectionGroupRequest
+  ): Promise<VectorSearchResult<T>[]>;
 
   /**
    * Returns document's ids array of a given collection.

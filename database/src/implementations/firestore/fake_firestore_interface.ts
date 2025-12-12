@@ -8,6 +8,7 @@ const fakeDocReference = {
       data() {
         return {
           key: 'value',
+          embedding: [1, 0, 0],
         };
       },
     };
@@ -30,6 +31,7 @@ export const fakeFirestoreDatabase = {
   collection(...args: unknown[]) {
     console.log(args);
     return {
+      name: args[0] as string,
       limit(...args: unknown[]) {
         console.log(args);
         return this;
@@ -48,15 +50,59 @@ export const fakeFirestoreDatabase = {
           path: '',
         };
       },
-      get() {
+      findNearest(...args: unknown[]) {
+        console.log(args);
         return {
-          docs: [fakeDocReference.get()],
+          get: () => ({
+            docs:
+              (this as unknown as { name: string }).name === 'invalid'
+                ? []
+                : [fakeDocReference.get()],
+          }),
         };
       },
+      get: () => ({
+        docs:
+          (this as unknown as { name: string }).name === 'invalid'
+            ? []
+            : [fakeDocReference.get()],
+      }),
     };
   },
   collectionGroup(...args: unknown[]) {
-    return this.collection(args);
+    console.log(args);
+    return {
+      limit(...args: unknown[]) {
+        console.log(args);
+        return this;
+      },
+      orderBy(...args: unknown[]) {
+        console.log(args);
+        return this;
+      },
+      where(...args: unknown[]) {
+        console.log(args);
+        return this;
+      },
+      findNearest(...args: unknown[]) {
+        console.log(args);
+        return {
+          get() {
+            return {
+              docs: [],
+            };
+          },
+        };
+      },
+      get() {
+        return {
+          docs:
+            (this as unknown as { name: string }).name === 'invalid'
+              ? []
+              : [fakeDocReference.get()],
+        };
+      },
+    };
   },
   runTransaction(func: (x: unknown) => unknown) {
     return func({
