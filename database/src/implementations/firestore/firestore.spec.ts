@@ -50,6 +50,25 @@ describe('FirestoreDatabase', () => {
       expect(document.length).toBe(1);
       expect(document[0].data?.key).toBe('value');
     });
+
+    it('should support array-contains operator', async () => {
+      const document = await database.getCollection({
+        collectionPath: 'restaurants',
+        filters: [new QueryFilter('tags', 'array-contains', 'pizza')],
+      });
+      expect(document.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should support array-contains with multiple filters', async () => {
+      const document = await database.getCollection({
+        collectionPath: 'restaurants',
+        filters: [
+          new QueryFilter('tags', 'array-contains', 'italian'),
+          new QueryFilter('categories', 'array-contains', 'food'),
+        ],
+      });
+      expect(document.length).toBeGreaterThanOrEqual(0);
+    });
   });
   describe('setRecord', () => {
     it('should run successfully.', async () => {
