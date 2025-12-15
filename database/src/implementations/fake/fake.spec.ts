@@ -148,6 +148,59 @@ describe('allFiltersMatch', () => {
     );
     expect(result).toBe(false);
   });
+
+  it('should return true when array-contains matches', () => {
+    const data = {
+      name: 'Restaurant',
+      tags: ['italian', 'pizza', 'pasta'],
+      categories: ['food', 'restaurant'],
+    };
+    const result = exportedForTesting.allFiltersMatch(
+      [
+        new QueryFilter('tags', 'array-contains', 'pizza'),
+        new QueryFilter('categories', 'array-contains', 'food'),
+      ],
+      data
+    );
+    expect(result).toBe(true);
+  });
+
+  it('should return false when array-contains does not match', () => {
+    const data = {
+      name: 'Restaurant',
+      tags: ['italian', 'pizza', 'pasta'],
+    };
+    const result = exportedForTesting.allFiltersMatch(
+      [new QueryFilter('tags', 'array-contains', 'chinese')],
+      data
+    );
+    expect(result).toBe(false);
+  });
+
+  it('should return false when array-contains is used on non-array field', () => {
+    const data = {
+      name: 'Restaurant',
+      status: 'active',
+    };
+    const result = exportedForTesting.allFiltersMatch(
+      [new QueryFilter('status', 'array-contains', 'active')],
+      data
+    );
+    expect(result).toBe(false);
+  });
+
+  it('should work with array-contains on nested fields', () => {
+    const data = {
+      restaurant: {
+        tags: ['italian', 'pizza'],
+      },
+    };
+    const result = exportedForTesting.allFiltersMatch(
+      [new QueryFilter('restaurant.tags', 'array-contains', 'pizza')],
+      data
+    );
+    expect(result).toBe(true);
+  });
 });
 
 describe('isValidCollection', () => {
@@ -384,6 +437,62 @@ describe('FakeDatabase', () => {
         filters: [new QueryFilter('discountType', 'in', ['PERCENTAGE'])],
       });
       expect(document.length).toBe(real.length);
+    });
+
+    it('should filter documents using arrayContains operator', async () => {
+      // Define restaurant type
+      type Restaurant = {
+        name: string;
+        tags: string[];
+        categories: string[];
+      };
+
+      // Add test data with arrays
+      const testDb = Database.createFake({
+        restaurants: {
+          rest_1: {
+            name: 'Italian Place',
+            tags: ['italian', 'pizza', 'pasta'],
+            categories: ['food', 'restaurant'],
+          },
+          rest_2: {
+            name: 'Chinese Place',
+            tags: ['chinese', 'noodles'],
+            categories: ['food', 'restaurant'],
+          },
+          rest_3: {
+            name: 'French Place',
+            tags: ['french', 'fine-dining'],
+            categories: ['food', 'restaurant', 'luxury'],
+          },
+        },
+      });
+
+      // Test arrayContains with single filter
+      const pizzaRestaurants = await testDb.getCollection<Restaurant>({
+        collectionPath: 'restaurants',
+        filters: [new QueryFilter('tags', 'array-contains', 'pizza')],
+      });
+      expect(pizzaRestaurants.length).toBe(1);
+      expect(pizzaRestaurants[0].data?.name).toBe('Italian Place');
+
+      // Test arrayContains with multiple filters
+      const luxuryRestaurants = await testDb.getCollection<Restaurant>({
+        collectionPath: 'restaurants',
+        filters: [
+          new QueryFilter('categories', 'array-contains', 'luxury'),
+          new QueryFilter('tags', 'array-contains', 'fine-dining'),
+        ],
+      });
+      expect(luxuryRestaurants.length).toBe(1);
+      expect(luxuryRestaurants[0].data?.name).toBe('French Place');
+
+      // Test arrayContains with no matches
+      const mexicanRestaurants = await testDb.getCollection<Restaurant>({
+        collectionPath: 'restaurants',
+        filters: [new QueryFilter('tags', 'array-contains', 'mexican')],
+      });
+      expect(mexicanRestaurants.length).toBe(0);
     });
   });
   describe('setRecord', () => {

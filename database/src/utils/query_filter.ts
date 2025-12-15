@@ -1,4 +1,12 @@
-export type OpStr = '<' | '<=' | '==' | '>' | '>=' | '!=' | 'in';
+export type OpStr =
+  | '<'
+  | '<='
+  | '=='
+  | '>'
+  | '>='
+  | '!='
+  | 'in'
+  | 'array-contains';
 
 /**
  * Retrieves the value from a nested object based on a dot-separated path.
@@ -64,7 +72,11 @@ export function allFiltersMatch(
         comparableData != docQuery.value) ||
       (condition == 'in' &&
         docQuery.value instanceof Array &&
-        docQuery.value.indexOf(comparableData.toString()) !== -1)
+        docQuery.value.indexOf(comparableData.toString()) !== -1) ||
+      (condition == 'array-contains' &&
+        !(docQuery.value instanceof Array) &&
+        Array.isArray(valueData) &&
+        valueData.includes(docQuery.value))
     ) {
       continue;
     } else {
