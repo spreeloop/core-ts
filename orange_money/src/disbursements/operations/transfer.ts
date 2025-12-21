@@ -44,6 +44,8 @@ export type TransferResponseRawData = {
   MD5OfMessageBody: string;
   MD5OfMessageAttributes: string;
   MessageId: string;
+  error?: string;
+  StatusCode?: number;
   ResponseMetadata: {
     RequestId: string;
     HTTPStatusCode: number;
@@ -137,6 +139,18 @@ export async function transfer({
 
   if (!response.response) {
     return { error: response.error };
+  }
+
+  if (
+    response.response?.data.error ||
+    response.response?.data.StatusCode === 503
+  ) {
+    logger.error(
+      `Transfer failed with error: ${
+        response.response.data.error || 'Service unavailable'
+      }`
+    );
+    return { error: response.response.data.error || 'Service unavailable' };
   }
 
   return {
