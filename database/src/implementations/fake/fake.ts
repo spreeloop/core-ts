@@ -10,6 +10,10 @@ import {
   GetCollectionRequest,
   Vector,
   VectorSearchResult,
+  StreamDocumentRequest,
+  StreamCollectionRequest,
+  StreamCollectionGroupRequest,
+  StreamUnsubscribe,
 } from '../../database';
 import {
   getDocumentId,
@@ -621,6 +625,126 @@ export class FakeDatabase implements Database {
       updateRecord: this.setRecord.bind(this),
       getCollection: this.getCollection.bind(this),
     });
+  }
+
+  /**
+   * Streams a document with real-time updates (fake implementation).
+   * @param {string} path The database path to the document.
+   * @param {Function} onNext Callback called when document data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  streamDocument<T = unknown>({
+    path,
+    onNext,
+    onError,
+  }: StreamDocumentRequest<T>): StreamUnsubscribe {
+    // Get initial data
+    const record = this.getRecord<T>(path);
+    record
+      .then((doc) => {
+        if (doc.data) {
+          onNext(doc as DatabaseDocument<T>);
+        }
+      })
+      .catch((error) => {
+        if (onError) {
+          onError(error);
+        }
+      });
+
+    // Return noop unsubscribe function for fake implementation
+    return () => {
+      // No-op for fake implementation
+    };
+  }
+
+  /**
+   * Streams a collection with real-time updates (fake implementation).
+   * @param {string} collectionPath The path to the collection.
+   * @param {QueryFilter[]} filters The filters to apply.
+   * @param {QueryOrderBy} orderBy The ordering attribute.
+   * @param {number} limit The result limit.
+   * @param {Function} transform The method that transform each value to a desired result.
+   * @param {Function} onNext Callback called when collection data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  streamCollection<T = unknown, R = DatabaseDocument<T>>({
+    collectionPath,
+    filters,
+    orderBy,
+    limit,
+    transform,
+    onNext,
+    onError,
+  }: StreamCollectionRequest<T, R>): StreamUnsubscribe {
+    // Get initial data
+    const collection = this.getCollection<T, R>({
+      collectionPath,
+      filters,
+      orderBy,
+      limit,
+      transform,
+    });
+    collection
+      .then((docs) => {
+        onNext(docs as DatabaseDocument<R>[]);
+      })
+      .catch((error) => {
+        if (onError) {
+          onError(error);
+        }
+      });
+
+    // Return noop unsubscribe function for fake implementation
+    return () => {
+      // No-op for fake implementation
+    };
+  }
+
+  /**
+   * Streams a collection group with real-time updates (fake implementation).
+   * @param {string} collectionId The ID of the collection group.
+   * @param {QueryFilter[]} filters The filters to apply.
+   * @param {QueryOrderBy} orderBy The ordering attribute.
+   * @param {number} limit The result limit.
+   * @param {Function} transform The method that transform each value to a desired result.
+   * @param {Function} onNext Callback called when collection data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  streamCollectionGroup<T = unknown, R = DatabaseDocument<T>>({
+    collectionId,
+    filters,
+    orderBy,
+    limit,
+    transform,
+    onNext,
+    onError,
+  }: StreamCollectionGroupRequest<T, R>): StreamUnsubscribe {
+    // Get initial data
+    const collection = this.getCollectionGroup<T, R>({
+      collectionId,
+      filters,
+      orderBy,
+      limit,
+      transform,
+    });
+    collection
+      .then((docs) => {
+        onNext(docs as DatabaseDocument<R>[]);
+      })
+      .catch((error) => {
+        if (onError) {
+          onError(error);
+        }
+      });
+
+    // Return noop unsubscribe function for fake implementation
+    return () => {
+      // No-op for fake implementation
+    };
   }
 }
 

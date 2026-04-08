@@ -58,6 +58,40 @@ export type VectorSearchResult<T = unknown> = {
   distance: number;
 };
 
+export type StreamCallback<T> = (data: DatabaseDocument<T>) => void;
+export type StreamCollectionCallback<T> = (data: DatabaseDocument<T>[]) => void;
+export type StreamErrorCallback = (error: Error) => void;
+export type StreamUnsubscribe = () => void;
+
+export type StreamDocumentRequest<T = unknown> = {
+  path: string;
+  onNext: StreamCallback<T>;
+  onError?: StreamErrorCallback;
+};
+
+export type StreamCollectionRequest<T = unknown, R = DatabaseDocument<T>> = {
+  collectionPath: string;
+  filters?: QueryFilter[];
+  orderBy?: QueryOrderBy<T>;
+  limit?: number;
+  transform?: DatabaseDocumentTransform<T, R>;
+  onNext: StreamCollectionCallback<R>;
+  onError?: StreamErrorCallback;
+};
+
+export type StreamCollectionGroupRequest<
+  T = unknown,
+  R = DatabaseDocument<T>
+> = {
+  collectionId: string;
+  filters?: QueryFilter[];
+  orderBy?: QueryOrderBy<T>;
+  limit?: number;
+  transform?: DatabaseDocumentTransform<T, R>;
+  onNext: StreamCollectionCallback<R>;
+  onError?: StreamErrorCallback;
+};
+
 export type DatabaseTransaction = {
   getCollection: <T, R>(data: GetCollectionRequest<T, R>) => Promise<R[]>;
   getRecord: <T>(path: string) => Promise<DatabaseDocument<T | undefined>>;
@@ -186,6 +220,61 @@ export abstract class Database {
    * @return {string[]} Array of document ids found.
    */
   abstract getDocumentIds(collectionPath: string): Promise<string[]>;
+
+  /**
+   * Streams a document with real-time updates.
+   * @param {string} path The database path to the document.
+   * @param {Function} onNext Callback called when document data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  abstract streamDocument<T = unknown>({
+    path,
+    onNext,
+    onError,
+  }: StreamDocumentRequest<T>): StreamUnsubscribe;
+
+  /**
+   * Streams a collection with real-time updates.
+   * @param {string} collectionPath The path to the collection.
+   * @param {QueryFilter[]} filters The filters to apply.
+   * @param {QueryOrderBy} orderBy The ordering attribute.
+   * @param {number} limit The result limit.
+   * @param {Function} transform The method that transform each value to a desired result.
+   * @param {Function} onNext Callback called when collection data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  abstract streamCollection<T = unknown, R = DatabaseDocument<T>>({
+    collectionPath,
+    filters,
+    orderBy,
+    limit,
+    transform,
+    onNext,
+    onError,
+  }: StreamCollectionRequest<T, R>): StreamUnsubscribe;
+
+  /**
+   * Streams a collection group with real-time updates.
+   * @param {string} collectionId The ID of the collection group.
+   * @param {QueryFilter[]} filters The filters to apply.
+   * @param {QueryOrderBy} orderBy The ordering attribute.
+   * @param {number} limit The result limit.
+   * @param {Function} transform The method that transform each value to a desired result.
+   * @param {Function} onNext Callback called when collection data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  abstract streamCollectionGroup<T = unknown, R = DatabaseDocument<T>>({
+    collectionId,
+    filters,
+    orderBy,
+    limit,
+    transform,
+    onNext,
+    onError,
+  }: StreamCollectionGroupRequest<T, R>): StreamUnsubscribe;
 
   /**
    * Creates a new Database transaction.

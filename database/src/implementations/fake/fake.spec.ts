@@ -6,7 +6,7 @@ import {
 import { QueryOrderBy } from '../../utils/query_order_by';
 import { TestData } from './test_data';
 import { QueryFilter } from '../../utils/query_filter';
-import { Database, DistanceMeasure } from '../../database';
+import { Database, DistanceMeasure, DatabaseDocument } from '../../database';
 
 const fakePromotion = {
   isActive: false,
@@ -696,6 +696,378 @@ describe('FakeDatabase', () => {
       expect(results.length).toBe(1);
       expect(results[0].path).toBe('root1/parent1/groups/doc1');
       expect(results[0].distance).toBe(0);
+    });
+  });
+
+  describe('Streaming Methods', () => {
+    const fakeDatabase = Database.createFake(TestData);
+
+    it('should stream a single document', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamDocument({
+        path: 'promotions/promotion_1',
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith({
+        path: 'promotions/promotion_1',
+        data: expect.objectContaining({
+          isActive: true,
+          promoCode: 'CMR237',
+          discountType: 'PERCENTAGE',
+          discount: 25,
+          maxUsageCount: 10,
+          minAmountToSpend: 5000,
+        }),
+      });
+
+      // More precise verification of exact values
+      const callArgs = onNext.mock.calls[0][0];
+      expect(callArgs.path).toBe('promotions/promotion_1');
+      expect(callArgs.data.isActive).toBe(true);
+      expect(callArgs.data.promoCode).toBe('CMR237');
+      expect(callArgs.data.discountType).toBe('PERCENTAGE');
+      expect(callArgs.data.discount).toBe(25);
+      expect(onError).not.toHaveBeenCalled();
+
+      // Unsubscribe should be callable
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollection({
+        collectionPath: 'promotions',
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: expect.stringMatching(/^promotions\//),
+            data: expect.objectContaining({
+              isActive: expect.any(Boolean),
+              promoCode: expect.any(String),
+            }),
+          }),
+        ])
+      );
+      expect(onError).not.toHaveBeenCalled();
+
+      // Precise verification of collection values
+      const collectionCallArgs = onNext.mock.calls[0][0];
+      expect(Array.isArray(collectionCallArgs)).toBe(true);
+      expect(collectionCallArgs.length).toBeGreaterThan(0);
+
+      // Check specific values of the first document
+      const firstDoc = collectionCallArgs.find(
+        (doc: DatabaseDocument) => doc.path === 'promotions/promotion_1'
+      );
+      expect(firstDoc).toBeDefined();
+      expect(firstDoc.data.isActive).toBe(true);
+      expect(firstDoc.data.promoCode).toBe('CMR237');
+      expect(firstDoc.data.discount).toBe(25);
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection with filters', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+      const filters: QueryFilter[] = [
+        { fieldPath: 'isActive', opStr: '==', value: true },
+      ];
+
+      const unsubscribe = fakeDatabase.streamCollection({
+        collectionPath: 'promotions',
+        filters,
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: expect.stringMatching(/^promotions\//),
+            data: expect.objectContaining({
+              isActive: true,
+            }),
+          }),
+        ])
+      );
+      expect(onError).not.toHaveBeenCalled();
+
+      // Precise verification that all returned documents have isActive: true
+      const filteredCallArgs = onNext.mock.calls[0][0];
+      expect(Array.isArray(filteredCallArgs)).toBe(true);
+      filteredCallArgs.forEach((doc: DatabaseDocument) => {
+        expect((doc.data as { isActive: boolean }).isActive).toBe(true);
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection with transform', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollection({
+        collectionPath: 'promotions',
+        transform: (doc: DatabaseDocument<Promotion>) => doc.data.promoCode,
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith(
+        expect.arrayContaining([expect.any(String)])
+      );
+      expect(onError).not.toHaveBeenCalled();
+
+      // Precise verification of transformed values
+      const transformCallArgs = onNext.mock.calls[0][0];
+      expect(Array.isArray(transformCallArgs)).toBe(true);
+      expect(transformCallArgs).toContain('CMR237'); // promoCode of promotion_1
+      expect(transformCallArgs).toContain('INACTIVE_PROMO'); // promoCode of promotion_2
+      expect(transformCallArgs).toContain('INVALID_RESTAURANT'); // promoCode of promotion_3
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection with orderBy', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollection({
+        collectionPath: 'promotions',
+        orderBy: new QueryOrderBy('discount', true),
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const results = onNext.mock.calls[0][0];
+      expect(results).toBeInstanceOf(Array);
+      expect(results.length).toBeGreaterThan(0);
+
+      // Check specific values and ordering
+      if (results.length > 1) {
+        // Check if ordered by discount descending
+        for (let i = 0; i < results.length - 1; i++) {
+          expect(results[i].data.discount).toBeGreaterThanOrEqual(
+            results[i + 1].data.discount
+          );
+        }
+      }
+
+      // Verify first document has highest discount (should be 2500 from promotion_2)
+      expect(results[0].data.discount).toBe(2500);
+      expect(results[0].data.promoCode).toBe('INACTIVE_PROMO');
+
+      expect(onError).not.toHaveBeenCalled();
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection with limit', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollection({
+        collectionPath: 'promotions',
+        limit: 2,
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const results = onNext.mock.calls[0][0];
+      expect(results).toBeInstanceOf(Array);
+      expect(results.length).toBeLessThanOrEqual(2);
+
+      // Verify specific values of limited documents
+      if (results.length >= 2) {
+        expect(results[0].data.promoCode).toBeDefined();
+        expect(results[1].data.promoCode).toBeDefined();
+        // Verify they are different documents
+        expect(results[0].path).not.toBe(results[1].path);
+      } else if (results.length === 1) {
+        expect(results[0].data.promoCode).toBeDefined();
+      }
+
+      expect(onError).not.toHaveBeenCalled();
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection group', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollectionGroup({
+        collectionId: 'reviews',
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: expect.stringMatching(/reviews/),
+            data: expect.objectContaining({
+              note: expect.any(Number),
+              review: expect.any(String),
+            }),
+          }),
+        ])
+      );
+      expect(onError).not.toHaveBeenCalled();
+
+      // Precise verification of document field values
+      const collectionGroupCallArgs = onNext.mock.calls[0][0];
+      expect(Array.isArray(collectionGroupCallArgs)).toBe(true);
+      expect(collectionGroupCallArgs.length).toBeGreaterThan(0);
+
+      // Check specific values of the first review document
+      const firstReview = collectionGroupCallArgs.find(
+        (doc: DatabaseDocument) => doc.path.includes('reviews/review_1')
+      );
+      if (firstReview) {
+        expect(firstReview.data.note).toBe(5);
+        expect(firstReview.data.review).toBe('Great service!');
+      }
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should stream a collection group with filters', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+      const filters: QueryFilter[] = [
+        { fieldPath: 'note', opStr: '>=', value: 4 },
+      ];
+
+      const unsubscribe = fakeDatabase.streamCollectionGroup({
+        collectionId: 'reviews',
+        filters,
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: expect.stringMatching(/reviews/),
+            data: expect.objectContaining({
+              note: expect.any(Number),
+              review: expect.any(String),
+            }),
+          }),
+        ])
+      );
+      expect(onError).not.toHaveBeenCalled();
+
+      // Precise verification that all filtered documents have note >= 4
+      const filteredCollectionGroupCallArgs = onNext.mock.calls[0][0];
+      expect(Array.isArray(filteredCollectionGroupCallArgs)).toBe(true);
+      filteredCollectionGroupCallArgs.forEach((doc: DatabaseDocument) => {
+        expect((doc.data as { note: number }).note).toBeGreaterThanOrEqual(4);
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should handle document not found gracefully', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamDocument({
+        path: 'nonexistent/doc',
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).not.toHaveBeenCalled();
+      expect(onError).not.toHaveBeenCalled();
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should handle empty collection gracefully', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollection({
+        collectionPath: 'emptycollection',
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith([]);
+      expect(onError).not.toHaveBeenCalled();
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
+    });
+
+    it('should handle collection group not found gracefully', async () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = fakeDatabase.streamCollectionGroup({
+        collectionId: 'nonexistent',
+        onNext,
+        onError,
+      });
+
+      // Wait for async operation
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(onNext).toHaveBeenCalledWith([]);
+      expect(onError).not.toHaveBeenCalled();
+
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
     });
   });
 });

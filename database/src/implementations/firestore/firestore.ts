@@ -7,6 +7,10 @@ import {
   GetCollectionRequest,
   GetCollectionGroupRequest,
   VectorSearchResult,
+  StreamDocumentRequest,
+  StreamCollectionRequest,
+  StreamCollectionGroupRequest,
+  StreamUnsubscribe,
 } from '../../database';
 import type {
   Firestore,
@@ -286,7 +290,7 @@ export class FirestoreDatabase implements Database {
    * @return {Promise<VectorSearchResult<T>[]>} Array of vector search results.
    */
   async findNearestVectorsInCollection<
-    T extends Record<string, unknown> = Record<string, unknown>
+    T extends object = Record<string, unknown>
   >(
     request: FindNearestVectorsInCollectionRequest
   ): Promise<VectorSearchResult<T>[]> {
@@ -312,8 +316,8 @@ export class FirestoreDatabase implements Database {
 
     const snapshot = await vectorQuery.get();
     return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
-      const data = doc.data() as T;
-      const distance = data['vector_distance'] as number;
+      const data = doc.data() as T & { vector_distance: number };
+      const distance = data.vector_distance;
       return {
         path: doc.ref.path,
         data,
@@ -422,5 +426,138 @@ export class FirestoreDatabase implements Database {
 
       return handler(customTransaction);
     });
+  }
+
+  /**
+   * Streams a document with real-time updates.
+   * @param {string} path The database path to the document.
+   * @param {Function} onNext Callback called when document data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  streamDocument<T = unknown>({
+    path,
+    onNext,
+    onError,
+  }: StreamDocumentRequest<T>): StreamUnsubscribe {
+    const docRef = this.firestoreDB.doc(path);
+    const unsubscribe = docRef.onSnapshot(
+      (snapshot: DocumentSnapshot<DocumentData>) => {
+        onNext({
+          path: snapshot.ref.path,
+          data: snapshot.data() as T,
+        });
+      },
+      (error) => {
+        if (onError) {
+          onError(error);
+        }
+      }
+    );
+    return unsubscribe;
+  }
+
+  /**
+   * Streams a collection with real-time updates.
+   * @param {string} collectionPath The path to the collection.
+   * @param {QueryFilter[]} filters The filters to apply.
+   * @param {QueryOrderBy} orderBy The ordering attribute.
+   * @param {number} limit The result limit.
+   * @param {Function} transform The method that transform each value to a desired result.
+   * @param {Function} onNext Callback called when collection data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  streamCollection<T = unknown, R = DatabaseDocument<T>>({
+    collectionPath,
+    filters,
+    orderBy,
+    limit,
+    transform,
+    onNext,
+    onError,
+  }: StreamCollectionRequest<T, R>): StreamUnsubscribe {
+    const transformer = transform || ((data) => data as R);
+    let query: Query = this.firestoreDB.collection(collectionPath);
+
+    for (const filter of filters || []) {
+      query = query.where(filter.fieldPath, filter.opStr, filter.value);
+    }
+    if (orderBy) {
+      query = query.orderBy(orderBy.field, orderBy.descending ? 'desc' : 'asc');
+    }
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const unsubscribe = query.onSnapshot(
+      (snapshot: QuerySnapshot) => {
+        const results = snapshot.docs.map((doc) =>
+          transformer({
+            path: doc.ref.path,
+            data: doc.data() as T,
+          })
+        );
+        onNext(results as DatabaseDocument<R>[]);
+      },
+      (error) => {
+        if (onError) {
+          onError(error);
+        }
+      }
+    );
+    return unsubscribe;
+  }
+
+  /**
+   * Streams a collection group with real-time updates.
+   * @param {string} collectionId The ID of the collection group.
+   * @param {QueryFilter[]} filters The filters to apply.
+   * @param {QueryOrderBy} orderBy The ordering attribute.
+   * @param {number} limit The result limit.
+   * @param {Function} transform The method that transform each value to a desired result.
+   * @param {Function} onNext Callback called when collection data changes.
+   * @param {Function} onError Callback called when an error occurs.
+   * @return {Function} Unsubscribe function to stop listening.
+   */
+  streamCollectionGroup<T = unknown, R = DatabaseDocument<T>>({
+    collectionId,
+    filters,
+    orderBy,
+    limit,
+    transform,
+    onNext,
+    onError,
+  }: StreamCollectionGroupRequest<T, R>): StreamUnsubscribe {
+    const transformer = transform || ((data) => data as R);
+    let query: Query = this.firestoreDB.collectionGroup(collectionId);
+
+    for (const filter of filters || []) {
+      query = query.where(filter.fieldPath, filter.opStr, filter.value);
+    }
+    if (orderBy) {
+      query = query.orderBy(orderBy.field, orderBy.descending ? 'desc' : 'asc');
+    }
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const unsubscribe = query.onSnapshot(
+      (snapshot: QuerySnapshot) => {
+        const results = snapshot.docs.map((doc) =>
+          transformer({
+            path: doc.ref.path,
+            data: doc.data() as T,
+          })
+        );
+        onNext(results as DatabaseDocument<R>[]);
+      },
+      (error) => {
+        if (onError) {
+          onError(error);
+        }
+      }
+    );
+    return unsubscribe;
   }
 }

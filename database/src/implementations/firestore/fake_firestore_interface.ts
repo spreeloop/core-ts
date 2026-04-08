@@ -25,6 +25,12 @@ const fakeDocReference = {
     console.log(args);
     return undefined;
   },
+  onSnapshot(...args: unknown[]) {
+    console.log(args);
+    return function unsubscribe() {
+      // Mock unsubscribe function for testing
+    };
+  },
 };
 
 export const fakeFirestoreDatabase = {
@@ -43,6 +49,12 @@ export const fakeFirestoreDatabase = {
       where(...args: unknown[]) {
         console.log(args);
         return this;
+      },
+      onSnapshot(...args: unknown[]) {
+        console.log(args);
+        return function unsubscribe() {
+          // Mock unsubscribe function for testing
+        };
       },
       add(...args: unknown[]) {
         console.log(args);
@@ -83,6 +95,12 @@ export const fakeFirestoreDatabase = {
       where(...args: unknown[]) {
         console.log(args);
         return this;
+      },
+      onSnapshot(...args: unknown[]) {
+        console.log(args);
+        return function unsubscribe() {
+          // Mock unsubscribe function for testing
+        };
       },
       findNearest(...args: unknown[]) {
         console.log(args);
