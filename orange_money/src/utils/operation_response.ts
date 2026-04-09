@@ -6,7 +6,7 @@ export type OperationResponse<T, T2 = unknown, R = unknown> = Promise<
 >;
 type SuccessfulOperationResponse<T, T2 = unknown> = {
   data: T;
-  raw: T2;
+  raw?: T2;
   error?: never;
 };
 

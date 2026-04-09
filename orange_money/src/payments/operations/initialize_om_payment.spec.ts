@@ -1,5 +1,5 @@
 import * as requests from '../../utils/https';
-import { ApiErrorType } from '../utils/constants';
+import { ApiErrorType, OrangeMoneyPaymentStatus } from '../utils/constants';
 
 import { TargetEnvironment } from '../../utils/utils';
 import { InitializeOrangeMoneyRequest } from '../utils/request_model';
@@ -229,6 +229,152 @@ describe('Test the initialization of payment', () => {
     });
     expect(result.data).toStrictEqual({
       payToken: 'MP220807558VEF7A9C4F09AED',
+    });
+  });
+
+  describe('Timeout / network-error fallback — status verification', () => {
+    const paymentConfig = {
+      orangeMoneyVersion: '1.2.0',
+      apiPassword: 'secret',
+      apiUserName: 'secret',
+      xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
+      targetEnvironment: TargetEnvironment.fake,
+      logger: logger,
+    };
+
+    // Simulates a pure network/timeout failure from /mp/pay (no HTTP response).
+    const mockNetworkFailure = () =>
+      jest.spyOn(requests, 'postRequest').mockResolvedValueOnce({
+        error: { requestFailed: { headers: {}, data: null } },
+      });
+
+    // Simulates the real-world OM WSO2 gateway "Send timeout" (HTTP 500 with XML body).
+    const mockHttpTimeoutFailure = () =>
+      jest.spyOn(requests, 'postRequest').mockResolvedValueOnce({
+        response: {
+          status: 500,
+          data: '<am:fault xmlns:am="http://wso2.org/apimanager"><am:code>101504</am:code><am:type>Status report</am:type><am:message>Runtime Error</am:message><am:description>Send timeout</am:description></am:fault>',
+        },
+        error: {
+          responseError: {
+            status: 500,
+            statusText: 'Internal Server Error',
+          },
+        },
+      });
+
+    const mockStatusSuccess = (status: OrangeMoneyPaymentStatus) =>
+      jest.spyOn(requests, 'getRequest').mockResolvedValueOnce({
+        response: {
+          status: 200,
+          data: {
+            message: 'Transaction retrieved successfully',
+            data: {
+              id: 75742131,
+              payToken: mobileInitiateParams.payToken,
+              status: status,
+            },
+          },
+        },
+      });
+
+    const mockStatusFailure = () =>
+      jest.spyOn(requests, 'getRequest').mockResolvedValueOnce({
+        error: { requestFailed: { headers: {}, data: null } },
+      });
+
+    it('returns success when /mp/pay times out but status check returns SUCCESSFULL', async () => {
+      mockNetworkFailure();
+      mockStatusSuccess(OrangeMoneyPaymentStatus.SUCCESSFULL_MOBILE_PAYMENT);
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      expect(result.error).toBeUndefined();
+      expect(result.data).toStrictEqual({
+        payToken: mobileInitiateParams.payToken,
+      });
+    });
+
+    it('returns success when /mp/pay times out but status check returns PENDING', async () => {
+      mockNetworkFailure();
+      mockStatusSuccess(OrangeMoneyPaymentStatus.PENDING_PAYMENT);
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      expect(result.error).toBeUndefined();
+      expect(result.data).toStrictEqual({
+        payToken: mobileInitiateParams.payToken,
+      });
+    });
+
+    it('returns success with payToken when /mp/pay times out and status check returns FAILED', async () => {
+      mockNetworkFailure();
+      mockStatusSuccess(OrangeMoneyPaymentStatus.FAILED_PAYMENT);
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      // FAILED is now treated as a definitive status from OM — the payToken is
+      // returned so the caller can inspect the actual status via getPaymentStatus.
+      expect(result.error).toBeUndefined();
+      expect(result.data).toStrictEqual({
+        payToken: mobileInitiateParams.payToken,
+      });
+    });
+
+    it('returns original /mp/pay error when /mp/pay times out and status check itself also fails', async () => {
+      mockNetworkFailure();
+      mockStatusFailure();
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      expect(result.error).toEqual(ApiErrorType.failedToInitiateThePayment);
+      expect(result.data).toBeUndefined();
+    });
+
+    it('returns success when /mp/pay returns HTTP 500 timeout but status check returns SUCCESSFULL', async () => {
+      mockHttpTimeoutFailure();
+      mockStatusSuccess(OrangeMoneyPaymentStatus.SUCCESSFULL_MOBILE_PAYMENT);
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      expect(result.error).toBeUndefined();
+      expect(result.data).toStrictEqual({
+        payToken: mobileInitiateParams.payToken,
+      });
+    });
+
+    it('returns original /mp/pay error when /mp/pay returns HTTP 500 timeout and status check also fails', async () => {
+      mockHttpTimeoutFailure();
+      mockStatusFailure();
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      expect(result.error).toEqual(ApiErrorType.failedToInitiateThePayment);
+      expect(result.data).toBeUndefined();
     });
   });
 });
