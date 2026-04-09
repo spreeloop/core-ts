@@ -145,4 +145,184 @@ describe('FirestoreDatabase', () => {
       expect(results.length).toBe(0);
     });
   });
+
+  describe('Streaming Methods', () => {
+    it('should have streaming methods defined', () => {
+      expect(typeof database.streamDocument).toBe('function');
+      expect(typeof database.streamCollection).toBe('function');
+      expect(typeof database.streamCollectionGroup).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamDocument', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamDocument({
+        path: 'test/doc',
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollection', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollection({
+        collectionPath: 'test',
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollection with filters', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+      const filters = [new QueryFilter('status', '==', 'active')];
+
+      const unsubscribe = database.streamCollection({
+        collectionPath: 'test',
+        filters,
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollection with orderBy', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollection({
+        collectionPath: 'test',
+        orderBy: new QueryOrderBy('createdAt', true),
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollection with limit', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollection({
+        collectionPath: 'test',
+        limit: 10,
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollection with transform', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollection({
+        collectionPath: 'test',
+        transform: (doc) => {
+          const data = doc.data as { id: string };
+          return data.id;
+        },
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollectionGroup', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollectionGroup({
+        collectionId: 'test',
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollectionGroup with filters', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+      const filters = [new QueryFilter('type', '==', 'document')];
+
+      const unsubscribe = database.streamCollectionGroup({
+        collectionId: 'test',
+        filters,
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollectionGroup with orderBy', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollectionGroup({
+        collectionId: 'test',
+        orderBy: new QueryOrderBy('timestamp', false),
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollectionGroup with limit', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollectionGroup({
+        collectionId: 'test',
+        limit: 5,
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should return unsubscribe function for streamCollectionGroup with transform', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamCollectionGroup({
+        collectionId: 'test',
+        transform: (doc) => {
+          const data = doc.data as Record<string, unknown>;
+          return { ...data, path: doc.path };
+        },
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+
+    it('should handle error callbacks', () => {
+      const onNext = jest.fn();
+      const onError = jest.fn();
+
+      const unsubscribe = database.streamDocument({
+        path: 'test/doc',
+        onNext,
+        onError,
+      });
+
+      expect(typeof unsubscribe).toBe('function');
+    });
+  });
 });
