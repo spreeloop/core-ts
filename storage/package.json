@@ -2,12 +2,27 @@
   "name": "@spreeloop/storage",
   "version": "0.0.1",
   "description": "a storage APIs integration package",
+  "keywords": [
+    "storage",
+    "firebase",
+    "nodejs"
+  ],
+  "homepage": "https://github.com/spreeloop/core-ts/tree/master/storage",
+  "bugs": {
+    "url": "https://github.com/spreeloop/core-ts/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/spreeloop/core-ts.git"
   },
-  "homepage": "https://github.com/spreeloop/core-ts/tree/master/storage",
+  "license": "MIT",
   "author": "Spreeloop",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "prepublish": "tsc",
     "build": "tsc",
@@ -15,19 +30,9 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
-  "main": "dist/index.js",
-  "files": [
-    "/dist"
-  ],
-  "license": "MIT",
-  "types": "dist/index.d.ts",
-  "type": "commonjs",
-  "test command": "jest",
-  "keywords": [
-    "storage",
-    "firebase",
-    "nodejs"
-  ],
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.19.0",
     "@babel/preset-env": "^7.19.0",
@@ -53,7 +58,5 @@
     "tslib": "^2.4.0",
     "typescript": "^4.7.4"
   },
-  "dependencies": {
-    "firebase-admin": "^13.4.0"
-  }
+  "test command": "jest"
 }

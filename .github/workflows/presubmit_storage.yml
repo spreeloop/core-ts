@@ -1,4 +1,4 @@
-name: Pre-Submit (Orange Money)
+name: Pre-Submit (Storage)
 on:
   workflow_call:
 
