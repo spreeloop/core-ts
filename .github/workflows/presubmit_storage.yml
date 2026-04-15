@@ -1,0 +1,36 @@
+name: Pre-Submit (Storage)
+on:
+  workflow_call:
+
+jobs:
+  changes:
+    runs-on: [ubuntu-latest]
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            src:
+              - '.github/workflows/presubmit_storage.yml'
+              - 'storage/**/*.ts'
+
+  unit-tests:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: [ubuntu-latest]
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ./storage
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.0.0
+          cache: "npm"
+          cache-dependency-path: "storage/package-lock.json"
+      - run: npm ci
+      - run: npm run test
