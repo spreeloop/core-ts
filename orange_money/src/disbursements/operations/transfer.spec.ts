@@ -22,6 +22,7 @@ describe('transfer', () => {
         customerPhone: '',
         customerName: '',
         token: '',
+        transactionCode: '',
       },
       endPoint: '',
     });
@@ -48,6 +49,7 @@ describe('transfer', () => {
         customerPhone: '69532652',
         customerName: 'itachi uchiwa',
         token: 'token',
+        transactionCode: 'transactionCode',
       },
       endPoint: 'https://example.com',
     });
@@ -80,6 +82,7 @@ describe('transfer', () => {
         customerPhone: '695326522',
         customerName: 'itachi uchiwa',
         token: 'token',
+        transactionCode: 'transactionCode',
       },
       endPoint: 'https://example.com',
     });
@@ -130,6 +133,7 @@ describe('transfer', () => {
         customerPhone: '695326522',
         customerName: 'itachi uchiwa',
         token: 'token',
+        transactionCode: 'transactionCode',
       },
       endPoint: 'https://example.com',
     });

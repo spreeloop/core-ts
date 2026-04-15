@@ -25,6 +25,7 @@ export interface TransferRequest {
   finalCustomerNameAccuracy?: number | null;
   refundMethod?: TransferMethod | null;
   token: string;
+  transactionCode : string;
 }
 
 export const TransferRequestSchema = Joi.object<TransferRequest>({
@@ -38,6 +39,7 @@ export const TransferRequestSchema = Joi.object<TransferRequest>({
   finalCustomerNameAccuracy: Joi.number().integer().min(0).max(100).allow(null),
   refundMethod: Joi.string().allow(null),
   token: Joi.string().required(),
+  transactionCode: Joi.string().required(),
 });
 
 export type TransferResponseRawData = {
@@ -119,6 +121,7 @@ export async function transfer({
     final_customer_name: paramsValues.customerName,
     refund_method: TransferMethod.OrangeMoney,
     fees_included: paramsValues.feesIncluded ?? 'No',
+    transaction_code: paramsValues.transactionCode,
   };
 
   if (paramsValues.finalCustomerNameAccuracy) {
