@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/database",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Wrapper for accessing database providers.",
   "author": "Spreeloop",
   "test command": "jest",
@@ -13,7 +13,7 @@
   "scripts": {
     "prepublish": "tsc",
     "build": "tsc",
-    "lint": "eslint --max-warnings=0 --ext .js,.ts .",
+    "lint": "eslint --fix=true --max-warnings=0 --ext .js,.ts .",
     "test": "jest",
     "coverage": "jest --coverage"
   },
@@ -24,7 +24,8 @@
     "nodejs"
   ],
   "dependencies": {
-    "firebase-admin": "^13.4.0"
+    "firebase-admin": "^13.4.0",
+    "firebase": "^10.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
