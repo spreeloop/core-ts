@@ -9,9 +9,8 @@ export class FakeStorage implements Storage {
    * Anyone with this URL can permanently access the file.
    * @return {string} The download url.
    */
-  async generateDownloadURL(): Promise<GenerateDownloadURLResponse> {
-    const url =
-      'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
+  async generateDownloadURL(link?: string | null | undefined): Promise<GenerateDownloadURLResponse> {
+    const url = link ? link : 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
     return { data: url, raw: url };
   }
 }
