@@ -15,21 +15,21 @@ export interface UserAgent {
 /**
  * Service providing the user's geocoding.
  */
-export abstract class GeocodingInterface {
+export abstract class Geocoding {
   /**
    * Constructs a new Fake storage.
-   * @return {GeocodingInterface}
+   * @return {Geocoding}
    */
-  static createFake(): GeocodingInterface {
+  static createFake(): Geocoding {
     return new GeocodingFakeImplementation();
   }
 
   /**
    * Constructs a new OpenStreetMap storage.
    * @param {UserAgent} userAgent The user agent.
-   * @return {GeocodingInterface}
+   * @return {Geocoding}
    */
-  static createOpenStreetMap(userAgent: UserAgent): GeocodingInterface {
+  static createOpenStreetMap(userAgent: UserAgent): Geocoding {
     return new GeocodingOpenStreetMapImplementation(userAgent);
   }
 

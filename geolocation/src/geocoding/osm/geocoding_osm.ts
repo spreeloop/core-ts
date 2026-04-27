@@ -1,16 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
-import { GeocodingInterface, UserAgent } from '../../geocoding';
+import { Geocoding, UserAgent } from '../../geocoding';
 import { GeocodingAddress } from '../models/address_osm';
 import { GeocodingResultOSM } from '../models/result_osm';
 
 /**
- * An implementation of GeocodingInterface that uses Open street map to
+ * An implementation of Geocoding that uses Open street map to
  * retrieve the address.
  * Link to API documentation : https://nominatim.org/release-docs/latest/api/Reverse/.
  */
-export class GeocodingOpenStreetMapImplementation
-  implements GeocodingInterface
-{
+export class GeocodingOpenStreetMapImplementation implements Geocoding {
   private readonly userAgent: UserAgent;
 
   /**
