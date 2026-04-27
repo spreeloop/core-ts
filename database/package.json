@@ -1,18 +1,26 @@
 {
   "name": "@spreeloop/database",
-  "version": "0.2.4",
+  "version": "0.2.10",
   "description": "Wrapper for accessing database providers.",
   "author": "Spreeloop",
   "test command": "jest",
   "git repository": "https://github.com/spreeloop/core-ts/database",
-  "main": "dist/index.js",
+  "main": "dist/index.js",      
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
   "files": [
     "/dist"
   ],
   "scripts": {
-    "prepublish": "tsc",
-    "build": "tsc",
+    "build": "tsup",
+    "prepublish": "tsup",
     "lint": "eslint --max-warnings=0 --ext .js,.ts .",
     "test": "jest",
     "coverage": "jest --coverage"
@@ -23,9 +31,9 @@
     "firestore",
     "nodejs"
   ],
-  "dependencies": {
-    "firebase-admin": "^13.4.0",
-    "firebase": "^10.12.0"
+  "peerDependencies": {
+    "firebase": "^12.12.1",
+    "firebase-admin": "^13.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
@@ -40,10 +48,13 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "firebase": "^12.12.1",
+    "firebase-admin": "^13.4.0",
     "jest": "^30.0.3",
     "prettier": "^2.6.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
+    "tsup": "^8.5.1",
     "typescript": "^4.7.4"
   }
 }
