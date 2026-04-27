@@ -22,6 +22,7 @@ module.exports = {
   ignorePatterns: [
     '/dist/**/*', // Ignore built files.
     '/coverage/**/*', // Ignore built files.
+    'tsup.config.ts', // Ignore tsup config.
   ],
   plugins: ['@typescript-eslint', 'import', 'prettier'],
   rules: {

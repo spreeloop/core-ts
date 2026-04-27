@@ -1,6 +1,8 @@
 import { FakeStorage } from './implementations/fake/fake';
 import { FirebaseStorage } from './implementations/firebase/firebase';
+import { FirebaseClientStorage } from './implementations/firebase_client/firebase_client';
 import { Storage as NativeStorage } from 'firebase-admin/storage';
+import { FirebaseStorage as ClientStorage } from 'firebase/storage';
 import { FunctionResponse } from './implementations/utils/operation_response';
 
 export type GenerateDownloadURLResponse = FunctionResponse<string, string>;
@@ -24,6 +26,15 @@ export abstract class Storage {
    */
   static createFirebaseStorage(storage: NativeStorage): Storage {
     return new FirebaseStorage(storage);
+  }
+
+  /**
+   * Constructs a new Firebase client storage.
+   * @param {FirebaseStorage} storage The Firebase client storage instance.
+   * @return {FirebaseClientStorage}
+   */
+  static createFirebaseClientStorage(storage: ClientStorage): Storage {
+    return new FirebaseClientStorage(storage);
   }
 
   /**

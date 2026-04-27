@@ -6,6 +6,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   external: [
-    'firebase-admin/storage'
+    'firebase-admin/storage',
+    'firebase/storage'
   ],
 });
