@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/storage",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "a storage APIs integration package",
   "keywords": [
     "storage",
@@ -17,20 +17,27 @@
   },
   "license": "MIT",
   "author": "Spreeloop",
-  "type": "commonjs",
-  "main": "dist/index.js",
+  "main": "dist/index.js",      
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
   "files": [
     "/dist"
   ],
   "scripts": {
-    "prepublish": "tsc",
-    "build": "tsc",
+    "build": "tsup",
+    "prepublish": "tsup",
     "lint": "eslint --max-warnings=0 --ext .js,.ts .",
     "test": "jest",
     "coverage": "jest --coverage"
   },
-  "dependencies": {
+  "peerDependencies": {
     "firebase-admin": "^13.4.0"
   },
   "devDependencies": {
@@ -42,6 +49,7 @@
     "@typescript-eslint/parser": "^5.30.3",
     "babel-jest": "^29.7.0",
     "@types/jest": "^29.5.11",
+    "firebase-admin": "^13.4.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "codecov": "^3.8.3",
@@ -56,6 +64,7 @@
     "prettier": "^2.6.0",
     "ts-node": "^10.4.0",
     "tslib": "^2.4.0",
+    "tsup": "^8.5.1",
     "typescript": "^4.7.4"
   },
   "test command": "jest"
