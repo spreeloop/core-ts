@@ -1,11 +1,11 @@
-import { GeocodingInterface } from '../../geocoding';
+import { Geocoding } from '../../geocoding';
 import { GeocodingAddress } from '../models/address_osm';
 
 /**
  * An implementation of GeocodingInterface that uses fake data to
  * retrieve the address.
  */
-export class GeocodingFakeImplementation implements GeocodingInterface {
+export class GeocodingFakeImplementation implements Geocoding {
   private readonly geocodingLocation: Record<string, unknown> = {
     place_id: 116070976,
     licence:

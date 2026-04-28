@@ -1,16 +1,23 @@
 {
   "name": "@spreeloop/geolocation",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "spreeloop core geolocation package",
   "author": "Spreeloop",
   "keywords": [
     "geolocation",
     "reverse-geocoding",
     "openstreetmap"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  ], "homepage": "https://github.com/spreeloop/core-ts/tree/master/geolocation",
+  "bugs": {
+    "url": "https://github.com/spreeloop/core-ts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spreeloop/core-ts.git"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -18,6 +25,9 @@
       "import": "./dist/index.mjs"
     }
   },
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "tsup",
     "lint": "eslint --max-warnings=0 --ext .js,.ts .",
