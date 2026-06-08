@@ -1,8 +1,6 @@
 import { Firestore } from 'firebase-admin/lib/firestore';
-import { Firestore as FirestoreClient } from 'firebase/firestore';
 import { FakeDatabase } from './implementations/fake/fake';
 import { FirestoreDatabase } from './implementations/firestore/firestore';
-import { FirestoreClientDatabase } from './implementations/firestore_client/firestore_client';
 import { QueryFilter } from './utils/query_filter';
 import { QueryOrderBy } from './utils/query_order_by';
 
@@ -132,17 +130,6 @@ export abstract class Database {
    */
   static createFirestore(firestoreDB: Firestore): FirestoreDatabase {
     return new FirestoreDatabase(firestoreDB);
-  }
-
-  /**
-   * Constructs a new Firestore database from Firebase Client SDK.
-   * @param {Firestore} firestoreDB the firestore database from firebase/firestore.
-   * @return {FirestoreClientDatabase}
-   */
-  static createFirestoreClient(
-    firestoreDB: FirestoreClient
-  ): FirestoreClientDatabase {
-    return new FirestoreClientDatabase(firestoreDB);
   }
 
   /**
