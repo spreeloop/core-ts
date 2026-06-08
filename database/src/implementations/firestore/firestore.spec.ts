@@ -1,8 +1,8 @@
 import { Firestore } from 'firebase-admin/lib/firestore';
-import { fakeFirestoreDatabase } from './fake_firestore_interface';
-import { QueryOrderBy } from '../../utils/query_order_by';
-import { QueryFilter } from '../../utils/query_filter';
 import { Database, DistanceMeasure } from '../../database';
+import { QueryFilter } from '../../utils/query_filter';
+import { QueryOrderBy } from '../../utils/query_order_by';
+import { fakeFirestoreDatabase } from './fake_firestore_interface';
 
 describe('FirestoreDatabase', () => {
   const database = Database.createFirestore(
