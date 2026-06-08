@@ -1,4 +1,4 @@
-import { Firestore } from 'firebase-admin/lib/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { Firestore as FirestoreClient } from 'firebase/firestore';
 import { FakeDatabase } from './implementations/fake/fake';
 import { FirestoreDatabase } from './implementations/firestore/firestore';
