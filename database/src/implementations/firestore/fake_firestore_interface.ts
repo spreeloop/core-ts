@@ -11,6 +11,11 @@ const fakeDocReference = {
           embedding: [1, 0, 0],
         };
       },
+      get: () => {
+        return {
+          vector_distance: 0.5,
+        };
+      },
     };
   },
   update(...args: unknown[]) {

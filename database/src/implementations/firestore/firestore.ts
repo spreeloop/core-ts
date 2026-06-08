@@ -1,28 +1,28 @@
+import type {
+  CollectionGroup,
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+  DocumentSnapshot,
+  Firestore,
+  Query,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
+} from 'firebase-admin/lib/firestore';
 import {
   Database,
   DatabaseDocument,
   DatabaseTransaction,
-  FindNearestVectorsInCollectionRequest,
   FindNearestVectorsInCollectionGroupRequest,
-  GetCollectionRequest,
+  FindNearestVectorsInCollectionRequest,
   GetCollectionGroupRequest,
-  VectorSearchResult,
-  StreamDocumentRequest,
-  StreamCollectionRequest,
+  GetCollectionRequest,
   StreamCollectionGroupRequest,
+  StreamCollectionRequest,
+  StreamDocumentRequest,
   StreamUnsubscribe,
+  VectorSearchResult,
 } from '../../database';
-import type {
-  Firestore,
-  CollectionReference,
-  Query,
-  QuerySnapshot,
-  DocumentReference,
-  DocumentSnapshot,
-  DocumentData,
-  CollectionGroup,
-  QueryDocumentSnapshot,
-} from 'firebase-admin/lib/firestore';
 import {
   isValidCollectionPath,
   isValidDocumentPath,
@@ -312,12 +312,14 @@ export class FirestoreDatabase implements Database {
       distanceMeasure: request.distanceMeasure,
       limit: request.limit || 10,
       distanceResultField: 'vector_distance',
+      distanceThreshold: request.distanceThreshold,
     });
 
     const snapshot = await vectorQuery.get();
+
     return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
-      const data = doc.data() as T & { vector_distance: number };
-      const distance = data.vector_distance;
+      const data = doc.data() as T;
+      const distance = doc.get('vector_distance');
       return {
         path: doc.ref.path,
         data,
@@ -354,12 +356,14 @@ export class FirestoreDatabase implements Database {
       queryVector: request.queryVector,
       distanceMeasure: request.distanceMeasure,
       limit: request.limit || 10,
+      distanceResultField: 'vector_distance',
+      distanceThreshold: request.distanceThreshold,
     });
 
     const snapshot = await vectorQuery.get();
     return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
       const data = doc.data() as T;
-      const distance = data['vector_distance'] as number;
+      const distance = doc.get('vector_distance');
       return {
         path: doc.ref.path,
         data,
