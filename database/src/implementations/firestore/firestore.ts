@@ -8,7 +8,7 @@ import type {
   Query,
   QueryDocumentSnapshot,
   QuerySnapshot,
-} from 'firebase-admin/lib/firestore';
+} from 'firebase-admin/firestore';
 import {
   Database,
   DatabaseDocument,
