@@ -1,6 +1,6 @@
 {
   "name": "@spreeloop/orange_money",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "A orange money api integration package",
   "repository": {
     "type": "git",

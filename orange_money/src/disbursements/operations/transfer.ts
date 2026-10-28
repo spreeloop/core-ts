@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { RequestResponse, postRequest } from '../../utils/https';
+import { RequestResponse, postRequest, redact } from '../../utils/https';
 import { OperationResponse } from '../../utils/operation_response';
 import {
   DisbursementServiceConfig,
@@ -84,7 +84,7 @@ export async function transfer({
   endPoint: string;
 }): TransferResponse {
   const logger = configs.logger;
-  logger.info(`transfer is running with params : ${JSON.stringify(params)}`);
+  logger.info(`transfer is running with params : ${redact(params)}`);
 
   const { error: configsValidationError, value: configValues } =
     DisbursementServiceConfigSchema.validate(configs);

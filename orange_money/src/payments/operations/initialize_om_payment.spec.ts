@@ -278,10 +278,40 @@ describe('Test the initialization of payment', () => {
         },
       });
 
+    // Every retry fails, so no call reaches the real network.
     const mockStatusFailure = () =>
-      jest.spyOn(requests, 'getRequest').mockResolvedValueOnce({
+      jest.spyOn(requests, 'getRequest').mockResolvedValue({
         error: { requestFailed: { headers: {}, data: null } },
       });
+
+    // Skips the delay between the status check retries.
+    beforeEach(() => {
+      jest.spyOn(global, 'setTimeout').mockImplementation(((
+        resolve: () => void
+      ) => {
+        resolve();
+        return 0;
+      }) as unknown as typeof setTimeout);
+    });
+
+    it('retries the status check while the payment is still INITIATED', async () => {
+      mockHttpTimeoutFailure();
+      mockStatusSuccess(OrangeMoneyPaymentStatus.INITIATE_PAYMENT);
+      const statusSpy = mockStatusSuccess(
+        OrangeMoneyPaymentStatus.PENDING_PAYMENT
+      );
+
+      const result = await initializeOmPayment({
+        mobileInitParams: mobileInitiateParams,
+        paymentConfig,
+        endPoint: 'https://api.paytoken.co',
+      });
+
+      expect(statusSpy).toHaveBeenCalledTimes(2);
+      expect(result.data).toStrictEqual({
+        payToken: mobileInitiateParams.payToken,
+      });
+    });
 
     it('returns success when /mp/pay times out but status check returns SUCCESSFULL', async () => {
       mockNetworkFailure();

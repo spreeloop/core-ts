@@ -3,6 +3,7 @@ import {
   RequestStatusCode,
   isSuccessfulCodeResponse,
   postRequest,
+  redact,
 } from '../../utils/https';
 import { Routes } from '../routes/routes';
 import {
@@ -24,6 +25,9 @@ import {
 } from '../utils/request_model';
 import { validateData } from '../utils/utils';
 import { getPaymentStatus } from './get_payment_status';
+
+const statusCheckAttempts = 3;
+const statusCheckDelayMs = 3000;
 
 /**
  * Initiates the payment.
@@ -120,19 +124,32 @@ export async function initializeOmPayment({
       `Attempting status verification with payToken: ${mobileInitParams.payToken}`
   );
 
+  // Right after a timeout OM may still be processing /mp/pay: the status can
+  // still be INITIATED (or the status call fail too) for a few seconds.
   const routes = new Routes(paymentConfig.orangeMoneyVersion);
-  const statusResponse = await getPaymentStatus({
-    paymentServiceConfig: paymentConfig,
-    mobileStatusVerificationParams: {
-      accessToken: mobileInitParams.accessToken,
-      payToken: mobileInitParams.payToken,
-    },
-    endPoint: routes.mobilePaymentStatus({
-      payToken: mobileInitParams.payToken,
-    }),
-  });
-
-  const paymentStatus = statusResponse.data?.status;
+  let paymentStatus: OrangeMoneyPaymentStatus | undefined;
+  for (let attempt = 1; attempt <= statusCheckAttempts; attempt++) {
+    const statusResponse = await getPaymentStatus({
+      paymentServiceConfig: paymentConfig,
+      mobileStatusVerificationParams: {
+        accessToken: mobileInitParams.accessToken,
+        payToken: mobileInitParams.payToken,
+      },
+      endPoint: routes.mobilePaymentStatus({
+        payToken: mobileInitParams.payToken,
+      }),
+    });
+    paymentStatus = statusResponse.data?.status;
+    if (
+      paymentStatus &&
+      paymentStatus !== OrangeMoneyPaymentStatus.INITIATE_PAYMENT
+    ) {
+      break;
+    }
+    if (attempt < statusCheckAttempts) {
+      await new Promise((resolve) => setTimeout(resolve, statusCheckDelayMs));
+    }
+  }
 
   if (
     paymentStatus === OrangeMoneyPaymentStatus.SUCCESSFULL_MOBILE_PAYMENT ||
@@ -152,8 +169,9 @@ export async function initializeOmPayment({
     };
   }
 
-  // Status is FAILED, CANCELLED, EXPIRED, or the status check itself failed.
-  // Surface the original /mp/pay error — not the status-check error — so
+  // FAILED and CANCELLED are accepted above: the payment exists on OM side and
+  // the caller's status pipeline settles it. Here the status is still
+  // INITIATED, EXPIRED, or the status check itself failed. Surface the original /mp/pay error — not the status-check error — so
   // callers always get a consistent, actionable error message.
   logger.warn(
     `[ORANGE MONEY] Status verification returned "${
@@ -212,7 +230,7 @@ const initializeOmPaymentInternal = async (params: {
   }
 
   params.paymentConfig.logger.info(
-    `Initiate the ORANGE MONEY Payment with data: ${JSON.stringify(
+    `Initiate the ORANGE MONEY Payment with data: ${redact(
       body
     )}\nroute: ${routes.mobileInitPayment()}`
   );
