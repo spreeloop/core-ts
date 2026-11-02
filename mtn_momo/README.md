@@ -30,3 +30,30 @@ processing and transaction management.
 
 To install the MTN MoMo Node.js Integration Module, simply add it to
 your Node.js project using npm:
+
+## Base URL configuration
+
+Set `baseURL` to the MTN MoMo API base URL for the selected `targetEnvironment`.
+The consumer chooses the host; the package uses that same configured host
+without inferring or switching it based on the environment. The package appends
+the API paths automatically.
+
+```typescript
+import {
+  MtnMomoPayment,
+  TargetEnvironment,
+  XTargetEnvironmentType,
+} from "@spreeloop/mtn_momo";
+
+const config = {
+  targetEnvironment: TargetEnvironment.prod,
+  baseURL: "https://proxy.momoapi.mtn.com",
+  apiKey: "your_api_key",
+  apiUserKey: "your_api_user_key",
+  xTargetEnvironment: XTargetEnvironmentType.mtnCameroon,
+  ocpApimSubscriptionKey: "your_subscription_key",
+  logger: console,
+};
+
+const payment = MtnMomoPayment.createPayment(config);
+```

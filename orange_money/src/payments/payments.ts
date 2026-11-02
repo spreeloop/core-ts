@@ -63,6 +63,7 @@ export class OrangeMoneyPayment {
    *
    * @param {OrangeMoneyPaymentParams} config - The payment configuration.
    *  - {TargetEnvironment} config.targetEnvironment the target environment.
+   *  - {string} config.baseURL Orange Money API base URL.
    *  - {string} config.apiUserName channelUser api username.
    *  - {string} config.apiPassword channelUser api password.
    *  - {string} config.xAuthToken the x-auth-token.

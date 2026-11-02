@@ -27,7 +27,7 @@ export class DisbursementFake implements DisbursementInterface {
    * @param {DisbursementServiceConfig} config - The required global route configuration.
    */
   constructor(config: DisbursementServiceConfig) {
-    this.routes = new Routes();
+    this.routes = new Routes(config.baseURL, config.baseURLToken);
     this.config = config;
   }
 

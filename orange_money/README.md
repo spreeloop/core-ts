@@ -36,6 +36,15 @@ your Node.js project using npm:
 npm install @spreeloop/orange_money
 ```
 
+## Configuration
+
+Provide endpoint URLs in the configuration object. For payments, set `baseURL`
+to the Orange Money API base URL without an API path; the package adds payment
+paths automatically. For disbursements, set `baseURL` to the disbursement API
+base URL and `baseURLToken` to the full access-token endpoint URL. Your
+application can source these values from its own configuration and change them
+without updating this package.
+
 ## Run tests
 
 ```sh
@@ -64,16 +73,27 @@ const config = {
     the y-note payment don't have the sandbox environment.
   */
   targetEnvironment: TargetEnvironment.prod,
+  baseURL: 'https://api-s1.orange.cm',
   apiUserName: 'your_api_username',
   apiPassword: 'your_api_password',
   xAuthToken: 'your_x_auth_token',
 
 // By default we use the 'console' to display the log but you can decide to 
 // use your own custom log.
-  logger: console;
+  logger: console,
 };
 
 const payment = OrangeMoneyPayment.createPayment(config);
+```
+
+For disbursements, include the configurable API URLs as well:
+
+```typescript
+const disbursementConfig = {
+  // Other required disbursement credentials and configuration...
+  baseURL: 'https://omapi.ynote.africa',
+  baseURLToken: 'https://omapi-token.ynote.africa/oauth2/token',
+};
 ```
 
 - ### Generate access-token

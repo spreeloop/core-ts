@@ -11,6 +11,11 @@ export interface MtnMomoPaymentConfigs {
   targetEnvironment: TargetEnvironment;
 
   /**
+   * API base URL for the selected target environment.
+   */
+  baseURL: string;
+
+  /**
    * The logger.
    */
   logger: LoggerInterface;

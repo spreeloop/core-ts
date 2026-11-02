@@ -1,5 +1,4 @@
 import { ApiErrorType, MtnMomoPaymentStatus } from "../utils/constants";
-import { Routes } from "../routes/routes";
 import {
   GetAccessTokenResponse,
   GetMtnMomoPaymentRequest,
@@ -15,7 +14,6 @@ import { MtnMomoInterface } from "../payments";
  */
 export class MtnMomoPaymentFake implements MtnMomoInterface {
   protected readonly config: MtnMomoPaymentConfigs;
-  protected readonly route: Routes;
 
   /**
    * Creates a new instance of the MtnMomoPaymentFake class.
@@ -24,7 +22,6 @@ export class MtnMomoPaymentFake implements MtnMomoInterface {
    */
   constructor(config: MtnMomoPaymentConfigs) {
     this.config = config;
-    this.route = new Routes();
   }
 
   /**

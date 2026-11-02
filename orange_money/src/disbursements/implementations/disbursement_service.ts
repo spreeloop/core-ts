@@ -22,6 +22,8 @@ export interface DisbursementServiceConfig {
   channelUserMsisdn: string;
   pin: string;
   environment: DisbursementXTargetEnvironmentType;
+  baseURL: string;
+  baseURLToken: string;
   logger: LoggerInterface;
 }
 
@@ -70,6 +72,24 @@ export const DisbursementServiceConfigSchema =
         'string.base': '"environment" should be a type of \'text\'',
         'string.empty': '"environment" cannot be an empty field',
         'any.required': '"environment" is a required field',
+      }),
+    baseURL: Joi.string()
+      .uri({ scheme: ['http', 'https'] })
+      .required()
+      .messages({
+        'string.base': '"baseURL" should be a type of \'text\'',
+        'string.empty': '"baseURL" cannot be an empty field',
+        'string.uri': '"baseURL" must be a valid HTTP or HTTPS URL',
+        'any.required': '"baseURL" is a required field',
+      }),
+    baseURLToken: Joi.string()
+      .uri({ scheme: ['http', 'https'] })
+      .required()
+      .messages({
+        'string.base': '"baseURLToken" should be a type of \'text\'',
+        'string.empty': '"baseURLToken" cannot be an empty field',
+        'string.uri': '"baseURLToken" must be a valid HTTP or HTTPS URL',
+        'any.required': '"baseURLToken" is a required field',
       }),
     logger: Joi.object().required().messages({
       'string.base': '"logger" should be a type of \'object\'',
