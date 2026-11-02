@@ -1,4 +1,3 @@
-import { TargetEnvironment } from "../../utils/constants";
 import { getAccessToken } from "../operations/get_access_token";
 import { getPaymentStatus } from "../operations/get_payment_status";
 import { initializeMtnMomoPayment as initMomoPayment } from "../operations/initialize_om_payment";
@@ -27,7 +26,7 @@ export class MtnMomoPaymentLive implements MtnMomoInterface {
    */
   constructor(config: MtnMomoPaymentConfigs) {
     this.config = config;
-    this.route = new Routes(TargetEnvironment.prod);
+    this.route = new Routes(config.baseURL);
   }
 
   /**

@@ -126,7 +126,10 @@ export async function initializeOmPayment({
 
   // Right after a timeout OM may still be processing /mp/pay: the status can
   // still be INITIATED (or the status call fail too) for a few seconds.
-  const routes = new Routes(paymentConfig.orangeMoneyVersion);
+  const routes = new Routes(
+    paymentConfig.baseURL,
+    paymentConfig.orangeMoneyVersion
+  );
   let paymentStatus: OrangeMoneyPaymentStatus | undefined;
   for (let attempt = 1; attempt <= statusCheckAttempts; attempt++) {
     const statusResponse = await getPaymentStatus({
@@ -203,7 +206,10 @@ const initializeOmPaymentInternal = async (params: {
   requestResult?: RequestResponse<GenericRequestResponseData>;
   schemaErrorMessage?: string;
 }> => {
-  const routes = new Routes(params.paymentConfig.orangeMoneyVersion);
+  const routes = new Routes(
+    params.paymentConfig.baseURL,
+    params.paymentConfig.orangeMoneyVersion
+  );
   const headers = {
     [ApiKey.keyAuthorization]: `Bearer ${params.mobileInitParams.accessToken}`,
     [ApiKey.keyContentType]: ConstantRequestField.typeJson,

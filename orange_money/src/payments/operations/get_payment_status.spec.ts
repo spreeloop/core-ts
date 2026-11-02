@@ -45,6 +45,7 @@ describe('Test the status verification', () => {
       paymentServiceConfig: {
         targetEnvironment: TargetEnvironment.fake,
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
+        baseURL: 'https://api.paytoken.co',
         apiUserName: 'secret',
         apiPassword: 'secret',
         logger: logger,
@@ -71,6 +72,7 @@ describe('Test the status verification', () => {
       paymentServiceConfig: {
         targetEnvironment: TargetEnvironment.fake,
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
+        baseURL: 'https://api.paytoken.co',
         apiUserName: 'secret',
         apiPassword: 'secret',
         logger: logger,

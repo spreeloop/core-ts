@@ -31,6 +31,7 @@ describe('Test the generation of payToken', () => {
       {
         logger: logger,
         apiPassword: 'secret',
+        baseURL: 'https://api.paytoken.co',
         apiUserName: 'secret',
         targetEnvironment: TargetEnvironment.fake,
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
@@ -53,6 +54,7 @@ describe('Test the generation of payToken', () => {
       {
         logger: logger,
         apiPassword: 'secret',
+        baseURL: 'https://api.paytoken.co',
         apiUserName: 'secret',
         targetEnvironment: TargetEnvironment.fake,
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',

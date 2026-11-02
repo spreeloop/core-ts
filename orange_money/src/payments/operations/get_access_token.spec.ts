@@ -28,6 +28,7 @@ describe('Test the generation of access-token', () => {
       {
         targetEnvironment: TargetEnvironment.fake,
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
+        baseURL: 'https://api.paytoken.co',
         apiUserName: 'secret',
         apiPassword: 'secret',
         logger: logger,
@@ -49,6 +50,7 @@ describe('Test the generation of access-token', () => {
       {
         targetEnvironment: TargetEnvironment.fake,
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
+        baseURL: 'https://api.paytoken.co',
         apiUserName: 'secret',
         apiPassword: 'secret',
         logger: logger,

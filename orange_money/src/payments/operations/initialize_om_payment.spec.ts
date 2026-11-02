@@ -61,6 +61,7 @@ describe('Test the initialization of payment', () => {
       },
       paymentConfig: {
         orangeMoneyVersion: '1.2.0',
+        baseURL: 'https://api.paytoken.co',
         apiPassword: 'secret',
         apiUserName: 'secret',
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
@@ -113,6 +114,7 @@ describe('Test the initialization of payment', () => {
       },
       paymentConfig: {
         orangeMoneyVersion: '1.2.0',
+        baseURL: 'https://api.paytoken.co',
         apiPassword: 'secret',
         apiUserName: 'secret',
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
@@ -165,6 +167,7 @@ describe('Test the initialization of payment', () => {
       },
       paymentConfig: {
         orangeMoneyVersion: '1.2.0',
+        baseURL: 'https://api.paytoken.co',
         apiPassword: 'secret',
         apiUserName: 'secret',
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
@@ -219,6 +222,7 @@ describe('Test the initialization of payment', () => {
       },
       paymentConfig: {
         orangeMoneyVersion: '1.2.0',
+        baseURL: 'https://api.paytoken.co',
         apiPassword: 'secret',
         apiUserName: 'secret',
         xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',
@@ -235,6 +239,7 @@ describe('Test the initialization of payment', () => {
   describe('Timeout / network-error fallback — status verification', () => {
     const paymentConfig = {
       orangeMoneyVersion: '1.2.0',
+      baseURL: 'https://api.paytoken.co',
       apiPassword: 'secret',
       apiUserName: 'secret',
       xAuthToken: 'ABCDEGHIJKLMNOPQRSTUVW',

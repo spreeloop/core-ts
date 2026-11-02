@@ -1,18 +1,34 @@
 import { DisbursementXTargetEnvironmentType } from '../utils/constants';
 
-const apiHost = 'https://omapi.ynote.africa';
-const apiTokenHost = 'https://omapi-token.ynote.africa/oauth2/token';
-
 /**
  * Orange Money API routes builder.
  * @class
  */
 export class Routes {
+  private readonly baseURL: string;
+  private readonly baseURLToken: string;
+
   /**
    * Constructs a new {CommonRoutes}.
    * @constructor
-   * @param {RoutesParams} config - The required global route configuration.
+   * @param {string} baseURL - The disbursement API base URL.
+   * @param {string} baseURLToken - The full access-token endpoint URL.
    */
+  constructor(baseURL: string, baseURLToken: string) {
+    if (typeof baseURL !== 'string' || !baseURL.trim()) {
+      throw new Error(
+        'The disbursement API host must be provided in the configuration.'
+      );
+    }
+    if (typeof baseURLToken !== 'string' || !baseURLToken.trim()) {
+      throw new Error(
+        'The disbursement API token endpoint must be provided in the configuration.'
+      );
+    }
+
+    this.baseURL = baseURL.trim().replace(/\/+$/, '');
+    this.baseURLToken = baseURLToken.trim().replace(/\/+$/, '');
+  }
 
   /**
    * Returns the base route for the API.
@@ -20,7 +36,7 @@ export class Routes {
    * @return {string} The base route.
    */
   private baseRoute(): string {
-    return `${apiHost}/${DisbursementXTargetEnvironmentType.prod}`;
+    return `${this.baseURL}/${DisbursementXTargetEnvironmentType.prod}`;
   }
 
   /**
@@ -29,7 +45,7 @@ export class Routes {
    * @return {string}
    */
   createAccessToken(): string {
-    return apiTokenHost;
+    return `${this.baseURLToken}/oauth2/token`;
   }
 
   /**

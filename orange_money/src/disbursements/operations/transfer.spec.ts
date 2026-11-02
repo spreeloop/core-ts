@@ -14,6 +14,8 @@ describe('transfer', () => {
         customerSecret: '',
         pin: '',
         environment: DisbursementXTargetEnvironmentType.sandbox,
+        baseURL: 'https://ynote.cm',
+        baseURLToken: 'https://ynote.cm/oauth2/token',
         logger: console,
       },
       params: {
@@ -41,6 +43,8 @@ describe('transfer', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
+        baseURL: 'https://ynote.cm',
+        baseURLToken: 'https://ynote.cm/oauth2/token',
         logger: console,
       },
       params: {
@@ -74,6 +78,8 @@ describe('transfer', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
+        baseURL: 'https://ynote.cm',
+        baseURLToken: 'https://ynote.cm/oauth2/token',
         logger: console,
       },
       params: {
@@ -125,6 +131,8 @@ describe('transfer', () => {
         customerSecret: 'customerSecret',
         pin: 'pin',
         environment: DisbursementXTargetEnvironmentType.sandbox,
+        baseURL: 'https://ynote.cm',
+        baseURLToken: 'https://ynote.cm/oauth2/token',
         logger: console,
       },
       params: {

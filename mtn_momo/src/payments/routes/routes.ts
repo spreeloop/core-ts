@@ -1,30 +1,22 @@
-import { TargetEnvironment } from "../../utils/constants";
-
-const livePaymentUrl = "https://proxy.momoapi.mtn.com";
-const sandboxPaymentUrl = "https://sandbox.momodeveloper.mtn.com";
-
 /**
  * Mtn Momo API routes builder.
  * @class
  */
 export class Routes {
-  private baseUrl: string;
+  private readonly baseUrl: string;
+
   /**
    * Creates a new instance of the class route.
    *
-   * @param {string} targetEnvironment - The optional target environment.
+   * @param {string} baseURL - The API base URL.
    */
-  constructor(targetEnvironment?: TargetEnvironment) {
-    switch (targetEnvironment) {
-      case TargetEnvironment.sandbox:
-        this.baseUrl = sandboxPaymentUrl;
-        break;
-      case TargetEnvironment.prod:
-        this.baseUrl = livePaymentUrl;
-        break;
-      default:
-        this.baseUrl = livePaymentUrl;
+  constructor(baseURL: string) {
+    if (typeof baseURL !== "string" || !baseURL.trim()) {
+      throw new Error(
+        "The MTN MoMo baseURL must be provided in the configuration."
+      );
     }
+    this.baseUrl = baseURL.trim().replace(/\/+$/, "");
   }
 
   /**

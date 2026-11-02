@@ -1,17 +1,24 @@
-const apiHost = 'https://api-s1.orange.cm';
-
 /**
  * Orange Money API routes builder.
  * @class
  */
 export class Routes {
+  private readonly baseURL: string;
+
   /**
    * Creates a new instance of the class route.
    *
-   * @param {string} version - The version of the instance. Optional.
+   * @param {string} baseURL - The Orange Money API base URL.
+   * @param {string} version - The API version. Optional.
    */
-  constructor(private readonly version?: string) {
+  constructor(baseURL: string, private readonly version?: string) {
     this.version = version ?? '1.0.2';
+    if (typeof baseURL !== 'string' || !baseURL.trim()) {
+      throw new Error(
+        'The Orange Money API host must be provided in the payment configuration.'
+      );
+    }
+    this.baseURL = baseURL.trim().replace(/\/+$/, '');
   }
 
   /**
@@ -19,7 +26,7 @@ export class Routes {
    *
    * @return {string} The base route for the API.
    */
-  baseRoute = (): string => `${apiHost}/omcoreapis/${this.version}`;
+  baseRoute = (): string => `${this.baseURL}/omcoreapis/${this.version}`;
 
   /**
    * Initializes the live payment.
@@ -56,6 +63,6 @@ export class Routes {
    * @return {string} The generated mobile access token endpoint.
    */
   mobileAccessToken(): string {
-    return `${apiHost}/token`;
+    return `${this.baseURL}/token`;
   }
 }

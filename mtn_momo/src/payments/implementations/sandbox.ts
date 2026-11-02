@@ -7,7 +7,6 @@ import {
   InitializeMtnMomoResponse,
   MtnMomoPaymentConfigs,
 } from "../utils/request_model";
-import { TargetEnvironment } from "../../utils/constants";
 import { getAccessToken } from "../operations/get_access_token";
 import { initializeMtnMomoPayment } from "../operations/initialize_om_payment";
 import { getPaymentStatus } from "../operations/get_payment_status";
@@ -27,7 +26,7 @@ export class MtnMomoPaymentSandbox implements MtnMomoInterface {
    */
   constructor(config: MtnMomoPaymentConfigs) {
     this.config = config;
-    this.route = new Routes(TargetEnvironment.sandbox);
+    this.route = new Routes(config.baseURL);
   }
 
   /**
