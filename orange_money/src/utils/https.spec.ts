@@ -3,6 +3,7 @@ import {
   encodeToBase64,
   hash,
   parseAxiosError,
+  redact,
 } from './https';
 import { AxiosError, AxiosResponse } from 'axios';
 
@@ -13,6 +14,17 @@ describe('hash', () => {
     const hashResponse = hash('key', 'secret');
     expect(hashResponse).toBe('a2V5OnNlY3JldA==');
     global.btoa = btoaRef;
+  });
+});
+
+describe('redact', () => {
+  it('should mask the credentials and the PIN at any depth', () => {
+    const logged = redact({
+      headers: { Authorization: 'Bearer abc', 'X-AUTH-TOKEN': 'xyz' },
+      data: { pin: '1234', amount: '100' },
+    });
+    expect(logged).not.toMatch(/abc|xyz|1234/);
+    expect(logged).toContain('"amount":"100"');
   });
 });
 
@@ -46,7 +58,7 @@ describe('parseAxiosError', () => {
       >
     );
     expect(parsedResponse).toEqual({
-      requestFailed: { data: undefined, headers: undefined },
+      requestFailed: { code: '400', message: 'message' },
     });
   });
 

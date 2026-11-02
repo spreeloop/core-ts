@@ -9,6 +9,32 @@ export enum RequestStatusCode {
   expectationFailed = 417,
 }
 
+// Keys whose values must never reach the logs (merchant PIN, tokens, secrets).
+const sensitiveKeys = new Set([
+  'authorization',
+  'x-auth-token',
+  'pin',
+  'customersecret',
+  'access_token',
+  'token',
+]);
+
+// Orange may hang without answering: without a timeout the Cloud Function is
+// killed before the caller can fall back on a status check.
+const requestTimeoutMs = 30000;
+
+/**
+ * Stringifies a value for logging, masking the sensitive keys.
+ *
+ * @param {unknown} value The value to stringify.
+ * @return {string} The JSON string with the sensitive values masked.
+ */
+export function redact(value: unknown): string {
+  return JSON.stringify(value, (key, val) =>
+    val && sensitiveKeys.has(key.toLowerCase()) ? '***' : val
+  );
+}
+
 export type RequestResponse<T> = {
   response?: {
     data: T;
@@ -40,7 +66,7 @@ export async function postRequest<T>({
 }): Promise<RequestResponse<T>> {
   try {
     logger.info(
-      `Request on the route ${route} is running with data : ${JSON.stringify({
+      `Request on the route ${route} is running with data : ${redact({
         headers,
         data,
         route,
@@ -55,9 +81,10 @@ export async function postRequest<T>({
       headers: headers,
       data: data,
       httpsAgent: agent,
+      timeout: requestTimeoutMs,
     });
     logger.info(
-      `Request on the route ${route} completed successfully with data : ${JSON.stringify(
+      `Request on the route ${route} completed successfully with data : ${redact(
         {
           response: response.data,
           status: response.status,
@@ -68,12 +95,12 @@ export async function postRequest<T>({
     return { response: { data: response.data, status: response.status } };
   } catch (error) {
     logger.warn(
-      `[Axios] failed to post request on the route: ${route} with data : ${JSON.stringify(
+      `[Axios] failed to post request on the route: ${route} with data : ${redact(
         { headers, data, route }
       )}`
     );
     const parsedError = parseAxiosError(error);
-    logger.warn(JSON.stringify(error));
+    logger.warn(redact(parsedError));
     if (error instanceof AxiosError) {
       if (error.response) {
         return {
@@ -113,7 +140,7 @@ export async function getRequest<T>({
 }): Promise<RequestResponse<T>> {
   try {
     logger.info(
-      `Request on the route ${route} is running with data : ${JSON.stringify({
+      `Request on the route ${route} is running with data : ${redact({
         headers,
         data,
         route,
@@ -128,9 +155,10 @@ export async function getRequest<T>({
       headers: headers,
       data: data,
       httpsAgent: agent,
+      timeout: requestTimeoutMs,
     });
     logger.info(
-      `Request on the route ${route} completed successfully with data : ${JSON.stringify(
+      `Request on the route ${route} completed successfully with data : ${redact(
         {
           response: response.data,
           status: response.status,
@@ -141,12 +169,12 @@ export async function getRequest<T>({
     return { response: { data: response.data, status: response.status } };
   } catch (error) {
     logger.warn(
-      `[Axios] failed to get request on the route: ${route} with data : ${JSON.stringify(
+      `[Axios] failed to get request on the route: ${route} with data : ${redact(
         { headers, data, route }
       )}`
     );
     const parsedError = parseAxiosError(error);
-    logger.warn(JSON.stringify(error));
+    logger.warn(redact(parsedError));
     if (error instanceof AxiosError) {
       if (error.response) {
         return {
@@ -183,10 +211,11 @@ export function parseAxiosError(error: unknown): unknown {
         requestBody: error.request.body,
       };
     } else if (error.request) {
+      // The request config holds the credentials and the PIN: keep it out.
       err = {
         requestFailed: {
-          headers: error.config?.headers,
-          data: error.config?.data,
+          code: error.code,
+          message: error.message,
         },
       };
     } else {

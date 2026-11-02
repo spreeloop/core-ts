@@ -2,6 +2,7 @@ import {
   encodeTheBodyOfRequest,
   encodeToBase64,
   postRequest,
+  redact,
 } from '../../utils/https';
 import { ApiErrorType, ApiKey, ConstantRequestField } from '../utils/constants';
 import {
@@ -37,7 +38,7 @@ export const getAccessToken = async (
   };
 
   logger.info(
-    `Generates the access token with data: \nheaders: ${JSON.stringify(
+    `Generates the access token with data: \nheaders: ${redact(
       options
     )}\ndata: ${JSON.stringify(
       encodeTheBodyOfRequest(bodyRequest)
