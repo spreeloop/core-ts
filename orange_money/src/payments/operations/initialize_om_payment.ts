@@ -128,6 +128,7 @@ export async function initializeOmPayment({
   // still be INITIATED (or the status call fail too) for a few seconds.
   const routes = new Routes(
     paymentConfig.baseURL,
+    paymentConfig.tokenBaseURL,
     paymentConfig.orangeMoneyVersion
   );
   let paymentStatus: OrangeMoneyPaymentStatus | undefined;
@@ -208,6 +209,7 @@ const initializeOmPaymentInternal = async (params: {
 }> => {
   const routes = new Routes(
     params.paymentConfig.baseURL,
+    params.paymentConfig.tokenBaseURL,
     params.paymentConfig.orangeMoneyVersion
   );
   const headers = {

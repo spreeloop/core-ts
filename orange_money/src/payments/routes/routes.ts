@@ -4,6 +4,7 @@
  */
 export class Routes {
   private readonly baseURL: string;
+  private readonly tokenBaseURL: string;
 
   /**
    * Creates a new instance of the class route.
@@ -11,7 +12,7 @@ export class Routes {
    * @param {string} baseURL - The Orange Money API base URL.
    * @param {string} version - The API version. Optional.
    */
-  constructor(baseURL: string, private readonly version?: string) {
+  constructor(baseURL: string, tokenBaseURL: string, private readonly version?: string) {
     this.version = version ?? '1.0.2';
     if (typeof baseURL !== 'string' || !baseURL.trim()) {
       throw new Error(
@@ -19,6 +20,7 @@ export class Routes {
       );
     }
     this.baseURL = baseURL.trim().replace(/\/+$/, '');
+    this.tokenBaseURL = tokenBaseURL.trim().replace(/\/+$/, '');
   }
 
   /**
@@ -63,6 +65,6 @@ export class Routes {
    * @return {string} The generated mobile access token endpoint.
    */
   mobileAccessToken(): string {
-    return `${this.baseURL}/token`;
+    return `${this.tokenBaseURL}/oauth2/token`;
   }
 }
