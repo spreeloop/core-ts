@@ -29,7 +29,11 @@ export class OrangeMoneyPaymentLive implements OrangeMoneyPaymentInterface {
    */
   constructor(config: OrangeMoneyPaymentConfigs) {
     this.config = config;
-    this.route = new Routes(config.baseURL, config.orangeMoneyVersion);
+    this.route = new Routes(
+      config.baseURL,
+      config.tokenBaseURL,
+      config.orangeMoneyVersion
+    );
   }
 
   /**

@@ -91,6 +91,7 @@ export interface OrangeMoneyPaymentConfigs {
   targetEnvironment: TargetEnvironment;
   logger: LoggerInterface;
   baseURL: string;
+  tokenBaseURL: string;
   apiUserName: string;
   apiPassword: string;
   xAuthToken: string;
